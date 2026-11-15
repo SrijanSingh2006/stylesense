@@ -1,3 +1,5 @@
+> Historical portfolio narrative: all figures, personas, timelines, business outcomes and interview/resume examples below are synthetic or illustrative. They are not evidence of real customer trials, interviews, realized GMV or production validation. For the current implementation and executable evidence, see KPI_DEFINITIONS.md, EXPERIMENTATION_GUIDE.md and ../qa/FINAL_ACCEPTANCE_REPORT.md.
+
 # Commerce Operations, Catalogue Quality & Predictive Intelligence
 ## Project: StyleSense – AI-Powered Commerce Intelligence Platform
 **Document:** Standard Operating Procedures (SOP), Operational Runbooks & Demand Intelligence  

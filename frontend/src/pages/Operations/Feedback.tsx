@@ -176,8 +176,8 @@ export const FeedbackPage: React.FC = () => {
 
             <form onSubmit={handleCreate} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Feedback Source</label>
-                <select
+                <label htmlFor="feedback-field-1" className="block font-semibold text-charcoal-700 mb-1">Feedback Source</label>
+                <select id="feedback-field-1"
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
                   className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-lg text-charcoal-800"
@@ -190,8 +190,8 @@ export const FeedbackPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Feedback Classification</label>
-                <select
+                <label htmlFor="feedback-field-2" className="block font-semibold text-charcoal-700 mb-1">Feedback Classification</label>
+                <select id="feedback-field-2"
                   value={feedbackType}
                   onChange={(e) => setFeedbackType(e.target.value)}
                   className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-lg text-charcoal-800"
@@ -204,8 +204,8 @@ export const FeedbackPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Review Rating</label>
-                <select
+                <label htmlFor="feedback-field-3" className="block font-semibold text-charcoal-700 mb-1">Review Rating</label>
+                <select id="feedback-field-3"
                   value={rating}
                   onChange={(e) => setRating(Number(e.target.value))}
                   className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-lg text-charcoal-800"
@@ -219,8 +219,8 @@ export const FeedbackPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Detailed Comment</label>
-                <textarea
+                <label htmlFor="feedback-field-4" className="block font-semibold text-charcoal-700 mb-1">Detailed Comment</label>
+                <textarea id="feedback-field-4"
                   rows={3}
                   required
                   placeholder="Shopper feedback notes..."

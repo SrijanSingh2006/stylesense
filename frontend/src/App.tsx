@@ -1,4 +1,6 @@
 import React from 'react'
+import { WishlistPage } from './pages/Storefront/Wishlist'
+import { ApiStatus, RouteErrorBoundary } from './components/ui/ApiStatus'
 import { Routes, Route, Navigate, Link } from 'react-router-dom'
 import { StorefrontLayout } from './layouts/StorefrontLayout'
 import { DashboardLayout } from './layouts/DashboardLayout'
@@ -29,13 +31,14 @@ import { SettingsPage } from './pages/Operations/Settings'
 
 export function App() {
   return (
-    <Routes>
+    <RouteErrorBoundary><ApiStatus /><Routes>
       {/* Customer Storefront Routes */}
       <Route element={<StorefrontLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/account/demo" element={<AccountDemoPage />} />
       </Route>
@@ -82,7 +85,7 @@ export function App() {
           </div>
         }
       />
-    </Routes>
+    </Routes></RouteErrorBoundary>
   )
 }
 export default App

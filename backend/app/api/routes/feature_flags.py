@@ -46,3 +46,10 @@ def update_feature_flag(flag_id: int, data: FeatureFlagUpdate, db: Session = Dep
     db.commit()
     db.refresh(flag)
     return flag
+
+@router.get("/feature-flags/eligibility/{customer_id}", tags=["Feature Flags"])
+def eligibility(customer_id: int, db: Session = Depends(get_db)):
+    from app.services.flags import feature_enabled
+    from app.models.customer import Customer
+    if not db.get(Customer, customer_id): raise HTTPException(404, "Customer not found")
+    return {f.name:feature_enabled(db,f.name,customer_id) for f in db.query(FeatureFlag).all()}

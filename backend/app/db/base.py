@@ -15,3 +15,4 @@ from app.models import (
     CatalogueIssue,
     Release,
 )
+from app.models.wishlist import WishlistEntry

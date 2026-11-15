@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "Production SPA deep-link refresh: PASS",
+    "Nginx to backend proxy/health: PASS",
+    "Migrated and seeded catalogue: PASS",
+    "Checkout, stock integrity and replay through production proxy: PASS",
+    "Negative checkout rejected through proxy: PASS"
+  ],
+  "order_id": 151,
+  "product_id": 116
+}

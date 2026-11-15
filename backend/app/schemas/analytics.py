@@ -18,7 +18,8 @@ class FunnelResponse(BaseModel):
 
 class CohortRetentionWeek(BaseModel):
     week_index: int
-    retention_rate: float
+    retention_rate: Optional[float]
+    observed: bool = True
     active_customers: int
 
 class CohortRow(BaseModel):
@@ -49,6 +50,7 @@ class NorthStarResponse(BaseModel):
     metric_tree_description: str
 
 class ProductPerformanceItem(BaseModel):
+    ctr: Optional[float] = None
     product_id: int
     name: str
     category: str

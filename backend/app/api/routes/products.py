@@ -46,7 +46,7 @@ def get_products(
     pages = (total + limit - 1) // limit if total > 0 else 1
 
     return ProductListResponse(
-        items=[ProductResponse.from_orm(p) for p in items],
+        items=[ProductResponse.model_validate(p) for p in items],
         total=total,
         page=page,
         limit=limit,
@@ -58,4 +58,4 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id, Product.active == True).first()
     if not product:
         raise HTTPException(status_code=404, detail=f"Product {product_id} not found")
-    return ProductResponse.from_orm(product)
+    return ProductResponse.model_validate(product)

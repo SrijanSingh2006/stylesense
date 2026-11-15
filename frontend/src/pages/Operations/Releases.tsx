@@ -1,3 +1,4 @@
+import { errorMessage } from '../../services/errors'
 import React, { useEffect, useState } from 'react'
 import { Rocket, CheckCircle2, AlertTriangle, ShieldCheck, Clock, Check } from 'lucide-react'
 import { fetchReleases, updateRelease } from '../../services/api'
@@ -35,7 +36,7 @@ export const ReleasesPage: React.FC = () => {
       await updateRelease(rel.id, { checklist: updatedChecklist })
       load()
     } catch (err: any) {
-      setErrorMsg(err?.response?.data?.detail || 'Failed to update checklist item.')
+      setErrorMsg(errorMessage(err))
     }
   }
 
@@ -47,7 +48,7 @@ export const ReleasesPage: React.FC = () => {
       setSuccessMsg(`Release ${rel.version} approved for deployment!`)
       load()
     } catch (err: any) {
-      setErrorMsg(err?.response?.data?.detail || 'Approval gate failed.')
+      setErrorMsg(errorMessage(err))
     }
   }
 
@@ -151,6 +152,8 @@ export const ReleasesPage: React.FC = () => {
                 {Object.entries(rel.checklist || {}).map(([key, val]) => (
                   <button
                     key={key}
+                    aria-label={`Checklist ${key}`}
+                    aria-pressed={val}
                     type="button"
                     onClick={() => handleToggleChecklistItem(rel, key)}
                     className={`p-3 rounded-xl border text-left text-xs transition-all flex items-center justify-between ${
@@ -175,7 +178,7 @@ export const ReleasesPage: React.FC = () => {
             {/* Action Buttons */}
             <div className="pt-2 border-t border-cream-200 flex items-center justify-between">
               <span className="text-[11px] text-charcoal-500">
-                Gate Rule: QA testing passed and engineering completed are required to approve release.
+                Gate Rule: Engineering, QA, analytics, documentation and stakeholder sign-off are required.
               </span>
 
               {rel.status !== 'READY_FOR_DEPLOY' && rel.status !== 'DEPLOYED' && (

@@ -155,7 +155,7 @@ export const DashboardLayout: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 text-xs font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Database Connected</span>
+              <span>Synthetic demo data</span>
             </div>
 
             <Link

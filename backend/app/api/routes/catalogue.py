@@ -22,6 +22,6 @@ def get_issues(db: Session = Depends(get_db)):
 def patch_issue(issue_id: int, data: CatalogueIssueUpdate, db: Session = Depends(get_db)):
     try:
         resolved = resolve_issue(db, issue_id)
-        return CatalogueIssueResponse.from_orm(resolved)
+        return CatalogueIssueResponse.model_validate(resolved)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

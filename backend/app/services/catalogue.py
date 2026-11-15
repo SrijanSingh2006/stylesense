@@ -58,12 +58,12 @@ def audit_catalogue(db: Session) -> CatalogueQualityResponse:
         db.commit()
         existing_issues = db.query(CatalogueIssue).filter(CatalogueIssue.is_resolved == False).all()
 
-    total_prods = len(products) or 1
+    total_prods = len(products)
     critical_cnt = sum(1 for i in existing_issues if i.severity == "CRITICAL")
     warning_cnt = sum(1 for i in existing_issues if i.severity in ["HIGH", "MEDIUM"])
 
     penalty = (critical_cnt * 5) + (warning_cnt * 1.5)
-    health_score = max(45.0, round(100.0 - penalty, 1))
+    health_score = max(0.0, round(100.0 - penalty, 1))
 
     by_type: Dict[str, int] = {}
     for i in existing_issues:

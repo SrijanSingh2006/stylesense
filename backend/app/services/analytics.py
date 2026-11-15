@@ -1,217 +1,120 @@
+"""UTC observation-based metrics. See docs/KPI_DEFINITIONS.md for denominators."""
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import func, distinct, desc
+from collections import defaultdict
+from decimal import Decimal
+from sqlalchemy import distinct
 from app.models.event import Event
 from app.models.order import Order, OrderItem
 from app.models.product import Product
-from app.models.customer import Customer
 from app.models.returns import Return
-from app.schemas.analytics import (
-    FunnelStep, FunnelResponse, CohortResponse, CohortRow, CohortRetentionWeek,
-    OverviewMetricsResponse, NorthStarResponse, ProductPerformanceItem
-)
+from app.schemas.analytics import *
 
-def calculate_funnel(db: Session, days: int = 30) -> FunnelResponse:
-    """
-    Computes session-based 6-stage consumer funnel:
-    Homepage -> Search/Discovery -> Product View -> Add to Cart -> Checkout Started -> Purchase
-    """
+QUALIFYING_ACTIVITY = {"homepage_view", "search", "product_view", "recommendation_click", "add_to_cart", "checkout_started", "purchase"}
+STAGES = [("Homepage View", "homepage_view", {"homepage_view"}),
+          ("Search / Discovery", "search", {"search", "recommendation_click"}),
+          ("Product View", "product_view", {"product_view"}),
+          ("Add to Cart", "add_to_cart", {"add_to_cart"}),
+          ("Checkout Started", "checkout_started", {"checkout_started"}),
+          ("Purchase", "purchase", {"purchase"})]
+
+def pct(a, b):
+    return round(100 * a / b, 2) if b else 0.0
+
+def calculate_funnel(db, days=30):
     cutoff = datetime.utcnow() - timedelta(days=days)
-    
-    # Query distinct sessions for each funnel milestone
-    q = db.query(Event.session_id, Event.event_type).filter(Event.occurred_at >= cutoff)
-    all_events = q.all()
+    events = db.query(Event).filter(Event.occurred_at >= cutoff, Event.occurred_at <= datetime.utcnow()).order_by(Event.occurred_at, Event.id).all()
+    progress = defaultdict(int)
+    for e in events:
+        idx = progress[e.session_id]
+        if idx < len(STAGES) and e.event_type in STAGES[idx][2]:
+            progress[e.session_id] += 1
+    counts = [sum(n >= i + 1 for n in progress.values()) for i in range(6)]
+    total = counts[0]
+    prev = total
+    steps = []
+    for i, (name, key, _) in enumerate(STAGES):
+        n = counts[i]
+        steps.append(FunnelStep(step_name=name, stage_key=key, count=n,
+                     conversion_from_prev=pct(n, prev), drop_off_count=prev-n,
+                     drop_off_rate=pct(prev-n, prev), overall_conversion=pct(n, total)))
+        prev = n
+    biggest = max(steps[1:], key=lambda x: x.drop_off_rate).step_name if total else "No eligible sessions"
+    return FunnelResponse(total_sessions=total, steps=steps, biggest_dropoff_stage=biggest,
+         methodology="Ordered UTC events; unique sessions entering homepage, then discovery, product, cart, checkout and purchase. Duplicate milestones count once.")
 
-    session_stages: Dict[str, set] = {}
-    for s_id, e_type in all_events:
-        if s_id not in session_stages:
-            session_stages[s_id] = set()
-        session_stages[s_id].add(e_type)
+def calculate_cohort_retention(db, now=None):
+    now = now or datetime.utcnow()
+    activity = defaultdict(list)
+    for e in db.query(Event).filter(Event.customer_id.is_not(None), Event.occurred_at <= now, Event.event_type.in_(QUALIFYING_ACTIVITY)).all():
+        activity[e.customer_id].append(e.occurred_at)
+    cohorts = defaultdict(list)
+    for customer, times in activity.items():
+        first = min(times)
+        start = first.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=first.weekday())
+        cohorts[start].append(customer)
+    rows = []
+    for start, members in sorted(cohorts.items()):
+        weeks = []
+        for w in range(5):
+            left, right = start + timedelta(weeks=w), start + timedelta(weeks=w+1)
+            active = sum(any(left <= t < right for t in activity[c]) for c in members)
+            observed = right <= now
+            weeks.append(CohortRetentionWeek(week_index=w, active_customers=active,
+                retention_rate=pct(active, len(members)) if observed else None, observed=observed))
+        rows.append(CohortRow(cohort_week=start.date().isoformat(), cohort_size=len(members), weeks=weeks))
+    return CohortResponse(cohorts=rows, period="UTC acquisition weeks; incomplete weeks shown as pending")
 
-    total_sessions = len(session_stages) or 1
+def eligible_orders(db, days=None, customer_id=None):
+    q = db.query(Order).filter(Order.status == "COMPLETED")
+    if days is not None: q = q.filter(Order.created_at >= datetime.utcnow()-timedelta(days=days), Order.created_at <= datetime.utcnow())
+    if customer_id is not None: q = q.filter(Order.customer_id == customer_id)
+    return q.all()
 
-    # Stage definitions
-    stages = [
-        ("Homepage View", "homepage_view", lambda s: "homepage_view" in s),
-        ("Search / Discovery", "search", lambda s: "search" in s or "recommendation_click" in s),
-        ("Product View", "product_view", lambda s: "product_view" in s),
-        ("Add to Cart", "add_to_cart", lambda s: "add_to_cart" in s),
-        ("Checkout Started", "checkout_started", lambda s: "checkout_started" in s),
-        ("Purchase", "purchase", lambda s: "purchase" in s)
-    ]
+def calculate_overview_metrics(db, days=30):
+    orders = eligible_orders(db, days)
+    events = db.query(Event).filter(Event.occurred_at >= datetime.utcnow()-timedelta(days=days), Event.occurred_at <= datetime.utcnow()).all()
+    sessions = {e.session_id for e in events}
+    visitors = {e.customer_id for e in events if e.customer_id is not None}
+    carts = {e.session_id for e in events if e.event_type == "add_to_cart"}
+    purchases = {o.session_id for o in orders if o.session_id}
+    rev = sum((o.total_amount for o in orders), Decimal("0"))
+    order_ids = {o.id for o in orders}
+    returned = {r.order_id for r in db.query(Return).all() if r.order_id in order_ids}
+    counts = defaultdict(int)
+    for o in orders: counts[o.customer_id] += 1
+    return OverviewMetricsResponse(total_revenue=float(rev), average_order_value=float(rev/len(orders)) if orders else 0,
+        total_sessions=len(sessions), unique_visitors=len(visitors), total_orders=len(orders),
+        conversion_rate=pct(len(purchases & sessions), len(sessions)),
+        cart_abandonment_rate=pct(len(carts-purchases), len(carts)),
+        return_rate=pct(len(returned), len(orders)), repeat_customer_rate=pct(sum(n>1 for n in counts.values()), len(counts)),
+        total_products_active=db.query(Product).filter(Product.active.is_(True)).count())
 
-    # Progressive funnel sessions
-    steps: List[FunnelStep] = []
-    prev_count = total_sessions
-    biggest_drop_stage = "Add to Cart"
-    max_drop_rate = -1.0
+def calculate_north_star(db):
+    sessions = lambda t: db.query(distinct(Event.session_id)).filter(Event.event_type == t).count()
+    purchases = len({o.session_id for o in eligible_orders(db) if o.session_id})
+    return NorthStarResponse(north_star_value=purchases,
+        supporting_metrics={"discovery_engagement_sessions":sessions("search"), "product_relevance_view_sessions":sessions("product_view"),
+           "cart_addition_sessions":sessions("add_to_cart"), "checkout_initiation_sessions":sessions("checkout_started"),
+           "purchase_to_cart_ratio":pct(purchases, sessions("add_to_cart"))},
+        metric_tree_description="Unique completed-order sessions, gross revenue before return refunds. Supporting metrics are unique event sessions.")
 
-    for idx, (display_name, key, condition) in enumerate(stages):
-        matching_count = sum(1 for s in session_stages.values() if condition(s))
-        
-        # Ensure count doesn't exceed total_sessions
-        matching_count = min(matching_count, total_sessions)
-        if idx == 0 and matching_count == 0:
-            matching_count = total_sessions
-
-        conv_from_prev = round((matching_count / prev_count) * 100.0, 2) if prev_count > 0 else 0.0
-        drop_count = max(0, prev_count - matching_count)
-        drop_rate = round((drop_count / prev_count) * 100.0, 2) if prev_count > 0 else 0.0
-        overall_conv = round((matching_count / total_sessions) * 100.0, 2)
-
-        if idx > 0 and drop_rate > max_drop_rate:
-            max_drop_rate = drop_rate
-            biggest_drop_stage = display_name
-
-        steps.append(FunnelStep(
-            step_name=display_name,
-            stage_key=key,
-            count=matching_count,
-            conversion_from_prev=conv_from_prev,
-            drop_off_count=drop_count,
-            drop_off_rate=drop_rate,
-            overall_conversion=overall_conv
-        ))
-        prev_count = matching_count
-
-    return FunnelResponse(
-        total_sessions=total_sessions,
-        steps=steps,
-        biggest_dropoff_stage=biggest_drop_stage,
-        methodology="Session-based funnel aggregation from atomic event logs over rolling window."
-    )
-
-def calculate_cohort_retention(db: Session) -> CohortResponse:
-    """
-    Calculates 4-week cohort retention based on first recorded customer purchase/event.
-    """
-    now = datetime.utcnow()
-    # Group customers by signup / first order date week
-    customers = db.query(Customer).all()
-    cohort_dict: Dict[str, List[int]] = {}
-
-    for c in customers:
-        week_label = f"Wk-{(now - c.created_at).days // 7}"
-        if week_label not in cohort_dict:
-            cohort_dict[week_label] = []
-        cohort_dict[week_label].append(c.id)
-
-    rows: List[CohortRow] = []
-    for week_idx in range(4):
-        label = f"Cohort W-{3 - week_idx}"
-        # Seeded customers count
-        size = 8 + (week_idx * 3)
-        # Synthetic realistic decaying retention curves
-        retention_rates = [
-            100.0,
-            round(max(20.0, 48.0 - (week_idx * 2.5)), 1),
-            round(max(15.0, 36.0 - (week_idx * 2.0)), 1),
-            round(max(12.0, 28.0 - (week_idx * 1.5)), 1),
-            round(max(10.0, 24.0 - (week_idx * 1.0)), 1),
-        ]
-        weeks = [
-            CohortRetentionWeek(
-                week_index=w,
-                retention_rate=rate,
-                active_customers=int(size * (rate / 100.0))
-            )
-            for w, rate in enumerate(retention_rates)
-        ]
-        rows.append(CohortRow(cohort_week=label, cohort_size=size, weeks=weeks))
-
-    return CohortResponse(cohorts=rows, period="Last 4 Weeks")
-
-def calculate_overview_metrics(db: Session, days: int = 30) -> OverviewMetricsResponse:
-    cutoff = datetime.utcnow() - timedelta(days=days)
-    
-    orders = db.query(Order).filter(Order.created_at >= cutoff, Order.status == "COMPLETED").all()
-    total_rev = sum(o.total_amount for o in orders)
-    total_orders = len(orders)
-    aov = round(total_rev / total_orders, 2) if total_orders > 0 else 0.0
-
-    total_sessions = db.query(distinct(Event.session_id)).filter(Event.occurred_at >= cutoff).count() or 1
-    unique_visitors = db.query(distinct(Event.customer_id)).filter(Event.occurred_at >= cutoff).count() or 1
-
-    cart_adds = db.query(distinct(Event.session_id)).filter(Event.event_type == "add_to_cart", Event.occurred_at >= cutoff).count()
-    checkouts = db.query(distinct(Event.session_id)).filter(Event.event_type == "checkout_started", Event.occurred_at >= cutoff).count()
-    
-    cart_abandonment = round(((cart_adds - checkouts) / cart_adds * 100.0), 2) if cart_adds > 0 else 42.5
-    cart_abandonment = max(0.0, min(100.0, cart_abandonment))
-
-    conv_rate = round((total_orders / total_sessions) * 100.0, 2)
-    
-    # Return rate
-    total_returns = db.query(Return).filter(Return.created_at >= cutoff).count()
-    return_rate = round((total_returns / total_orders * 100.0), 2) if total_orders > 0 else 8.5
-
-    # Repeat customer rate
-    customer_order_counts = db.query(Order.customer_id, func.count(Order.id)).filter(Order.status == "COMPLETED").group_by(Order.customer_id).all()
-    repeat_custs = sum(1 for cid, cnt in customer_order_counts if cnt > 1)
-    total_active_custs = len(customer_order_counts) or 1
-    repeat_rate = round((repeat_custs / total_active_custs) * 100.0, 2)
-
-    total_products = db.query(Product).filter(Product.active == True).count()
-
-    return OverviewMetricsResponse(
-        total_revenue=round(total_rev, 2),
-        average_order_value=aov,
-        total_sessions=total_sessions,
-        unique_visitors=unique_visitors,
-        total_orders=total_orders,
-        conversion_rate=conv_rate,
-        cart_abandonment_rate=cart_abandonment,
-        return_rate=return_rate,
-        repeat_customer_rate=repeat_rate,
-        total_products_active=total_products
-    )
-
-def calculate_north_star(db: Session) -> NorthStarResponse:
-    purchase_sessions = db.query(distinct(Event.session_id)).filter(Event.event_type == "purchase").count()
-    search_sessions = db.query(distinct(Event.session_id)).filter(Event.event_type == "search").count()
-    p_view_sessions = db.query(distinct(Event.session_id)).filter(Event.event_type == "product_view").count()
-    cart_sessions = db.query(distinct(Event.session_id)).filter(Event.event_type == "add_to_cart").count()
-    checkout_sessions = db.query(distinct(Event.session_id)).filter(Event.event_type == "checkout_started").count()
-
-    return NorthStarResponse(
-        north_star_name="Completed Purchase Sessions",
-        north_star_value=purchase_sessions,
-        supporting_metrics={
-            "discovery_engagement_sessions": search_sessions,
-            "product_relevance_view_sessions": p_view_sessions,
-            "cart_addition_sessions": cart_sessions,
-            "checkout_initiation_sessions": checkout_sessions,
-            "purchase_to_cart_ratio": round((purchase_sessions / cart_sessions * 100), 2) if cart_sessions > 0 else 0.0
-        },
-        metric_tree_description="The North Star Metric measures high-intent commerce fulfillment. The driver tree aligns Storefront Discovery, Size Confidence, and Frictionless Checkout with completed transactions."
-    )
-
-def get_product_performance(db: Session, limit: int = 50) -> List[ProductPerformanceItem]:
-    products = db.query(Product).filter(Product.active == True).all()
-    results = []
-
-    for p in products:
-        views = db.query(Event).filter(Event.product_id == p.id, Event.event_type == "product_view").count()
-        adds = db.query(Event).filter(Event.product_id == p.id, Event.event_type == "add_to_cart").count()
-        purchases = db.query(OrderItem).filter(OrderItem.product_id == p.id).count()
-        returns = db.query(Return).filter(Return.product_id == p.id).count()
-
-        conv = round((purchases / views * 100.0), 2) if views > 0 else 0.0
-        revenue = round(purchases * p.price, 2)
-        ret_rate = round((returns / purchases * 100.0), 2) if purchases > 0 else 0.0
-
-        results.append(ProductPerformanceItem(
-            product_id=p.id,
-            name=p.name,
-            category=p.category,
-            views=views,
-            adds_to_cart=adds,
-            purchases=purchases,
-            conversion_rate=conv,
-            revenue=revenue,
-            return_count=returns,
-            return_rate=ret_rate
-        ))
-
-    results.sort(key=lambda x: x.revenue, reverse=True)
-    return results[:limit]
+def get_product_performance(db, limit=50, days=30, customer_id=None):
+    orders = {o.id:o for o in eligible_orders(db, days, customer_id)}
+    result = []
+    for p in db.query(Product).all():
+        q = db.query(Event).filter(Event.product_id==p.id, Event.occurred_at >= datetime.utcnow()-timedelta(days=days), Event.occurred_at <= datetime.utcnow())
+        if customer_id is not None: q=q.filter(Event.customer_id==customer_id)
+        ev=q.all()
+        views={e.session_id for e in ev if e.event_type=="product_view"}
+        adds={e.session_id for e in ev if e.event_type=="add_to_cart"}
+        impressions={e.session_id for e in ev if e.event_type=="recommendation_impression"}
+        clicks={e.session_id for e in ev if e.event_type=="recommendation_click"}
+        items=[i for i in db.query(OrderItem).filter(OrderItem.product_id==p.id).all() if i.order_id in orders]
+        purchased_orders={i.order_id for i in items}
+        purchase_sessions={orders[i.order_id].session_id for i in items}
+        returned={r.order_id for r in db.query(Return).filter(Return.product_id==p.id).all() if r.order_id in purchased_orders}
+        result.append(ProductPerformanceItem(product_id=p.id, name=p.name, category=p.category, views=len(views), adds_to_cart=len(adds),
+            purchases=sum(i.quantity for i in items), conversion_rate=pct(len(purchase_sessions & views),len(views)),
+            revenue=float(sum((i.unit_price*i.quantity for i in items),Decimal("0"))), return_count=len(returned),
+            return_rate=pct(len(returned),len(purchased_orders)), ctr=pct(len(clicks & impressions),len(impressions)) if impressions else None))
+    return sorted(result,key=lambda p:p.revenue,reverse=True)[:limit]

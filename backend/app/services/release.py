@@ -63,7 +63,7 @@ def update_release(db: Session, release_id: int, data: ReleaseUpdate) -> Release
         # Enforce gate: cannot mark as READY_FOR_DEPLOY or DEPLOYED if mandatory items fail
         if data.status in ["READY_FOR_DEPLOY", "DEPLOYED"]:
             cl = rel.checklist or {}
-            mandatory = ["engineering_completed", "qa_testing_passed", "analytics_instrumented"]
+            mandatory = ["engineering_completed", "qa_testing_passed", "analytics_instrumented", "documentation_ready", "stakeholder_signoff"]
             missing = [m for m in mandatory if not cl.get(m, False)]
             if missing:
                 raise HTTPException(

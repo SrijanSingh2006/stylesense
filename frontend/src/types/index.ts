@@ -130,7 +130,8 @@ export interface FunnelResponse {
 
 export interface CohortRetentionWeek {
   week_index: number
-  retention_rate: number
+  retention_rate: number | null
+  observed?: boolean
   active_customers: number
 }
 
@@ -210,6 +211,8 @@ export interface VariantMetrics {
 }
 
 export interface ExperimentResults {
+  relative_lift_available?: boolean
+  attribution?: string
   experiment_id: number
   name: string
   status: string

@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
@@ -16,6 +17,7 @@ import { fetchProductById, fetchCompleteLook, fetchRecommendations, trackEvent }
 import { useCartStore } from '../../store/useCartStore'
 import { useUserStore } from '../../store/useUserStore'
 import { SizeAssistantModal } from '../../components/ui/SizeAssistantModal'
+import { WishlistButton } from '../../components/ui/WishlistButton'
 import { ProductCard } from '../../components/ui/ProductCard'
 import type { Product, CompleteLookResponse, RecommendationItem } from '../../types'
 
@@ -31,7 +33,6 @@ export const ProductDetailPage: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>('M')
   const [sizeModalOpen, setSizeModalOpen] = useState(false)
   const [addedToast, setAddedToast] = useState(false)
-  const [wishlisted, setWishlisted] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export const ProductDetailPage: React.FC = () => {
     loadData()
   }, [productId, currentUser])
 
+  if (!loading && (!product)) return <RequestError />
   if (loading || !product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
@@ -238,28 +240,18 @@ export const ProductDetailPage: React.FC = () => {
               <span>Add to Shopping Bag</span>
             </button>
 
-            <button
-              onClick={() => setWishlisted(!wishlisted)}
-              className={`p-4 rounded-xl border transition-colors ${
-                wishlisted
-                  ? 'border-red-200 bg-red-50 text-red-600'
-                  : 'border-cream-300 bg-white text-charcoal-600 hover:bg-cream-100'
-              }`}
-              title="Add to Wishlist"
-            >
-              <Heart className={`w-5 h-5 ${wishlisted ? 'fill-current' : ''}`} />
-            </button>
+            <WishlistButton productId={product.id} />
           </div>
 
           {/* Delivery & Assurance Perks */}
           <div className="space-y-2 pt-2 text-xs text-charcoal-500">
             <div className="flex items-center gap-2">
               <Truck className="w-4 h-4 text-brand" />
-              <span>Free express shipping on all orders above ₹1,500</span>
+              <span>Free delivery in this simulated checkout</span>
             </div>
             <div className="flex items-center gap-2">
               <RotateCcw className="w-4 h-4 text-brand" />
-              <span>Hassle-free 15-day return guarantee & size exchange</span>
+              <span>Return and exchange journey shown for demonstration</span>
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-brand" />

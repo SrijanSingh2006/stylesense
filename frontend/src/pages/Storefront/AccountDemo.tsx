@@ -81,10 +81,10 @@ export const AccountDemoPage: React.FC = () => {
             </h3>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+              <label htmlFor="accountdemo-field-1" className="block text-xs font-semibold text-charcoal-700 mb-1">
                 Display Name
               </label>
-              <input
+              <input id="accountdemo-field-1"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
@@ -94,10 +94,10 @@ export const AccountDemoPage: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+                <label htmlFor="accountdemo-field-2" className="block text-xs font-semibold text-charcoal-700 mb-1">
                   Budget Minimum (₹)
                 </label>
-                <input
+                <input id="accountdemo-field-2"
                   type="number"
                   value={budgetMin}
                   onChange={(e) => setBudgetMin(Number(e.target.value))}
@@ -105,10 +105,10 @@ export const AccountDemoPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+                <label htmlFor="accountdemo-field-3" className="block text-xs font-semibold text-charcoal-700 mb-1">
                   Budget Maximum (₹)
                 </label>
-                <input
+                <input id="accountdemo-field-3"
                   type="number"
                   value={budgetMax}
                   onChange={(e) => setBudgetMax(Number(e.target.value))}
@@ -118,10 +118,10 @@ export const AccountDemoPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+              <label htmlFor="accountdemo-field-4" className="block text-xs font-semibold text-charcoal-700 mb-1">
                 Preferred Categories (comma-separated)
               </label>
-              <input
+              <input id="accountdemo-field-4"
                 type="text"
                 value={categories}
                 onChange={(e) => setCategories(e.target.value)}
@@ -130,10 +130,10 @@ export const AccountDemoPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+              <label htmlFor="accountdemo-field-5" className="block text-xs font-semibold text-charcoal-700 mb-1">
                 Preferred Colours (comma-separated)
               </label>
-              <input
+              <input id="accountdemo-field-5"
                 type="text"
                 value={colours}
                 onChange={(e) => setColours(e.target.value)}
@@ -142,10 +142,10 @@ export const AccountDemoPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+              <label htmlFor="accountdemo-field-6" className="block text-xs font-semibold text-charcoal-700 mb-1">
                 Preferred Brands (comma-separated)
               </label>
-              <input
+              <input id="accountdemo-field-6"
                 type="text"
                 value={brands}
                 onChange={(e) => setBrands(e.target.value)}

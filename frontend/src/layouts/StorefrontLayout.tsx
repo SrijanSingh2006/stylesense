@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react'
+import { errorMessage } from '../services/errors'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   Search,
@@ -15,7 +16,8 @@ import {
 } from 'lucide-react'
 import { useCartStore } from '../store/useCartStore'
 import { useUserStore, type DemoUser } from '../store/useUserStore'
-import { visualSearch } from '../services/api'
+import { useWishlist } from '../hooks/useWishlist'
+import { visualSearch, trackEvent } from '../services/api'
 
 const DEMO_PERSONAS: DemoUser[] = [
   {
@@ -58,6 +60,7 @@ export const StorefrontLayout: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const { products: wishlistProducts } = useWishlist()
   const itemCount = useCartStore((s) => s.getItemCount())
   const { currentUser, setCurrentUser } = useUserStore()
 
@@ -84,11 +87,17 @@ export const StorefrontLayout: React.FC = () => {
         state: { visualResults: res, uploadedFileName: file.name },
       })
     } catch (err: any) {
-      setVisualError(err?.response?.data?.detail || 'Visual search failed to process image.')
+      setVisualError(errorMessage(err))
     } finally {
       setVisualLoading(false)
     }
   }
+
+  useEffect(() => {
+    const type = location.pathname === '/' ? 'homepage_view' : ['/search', '/discover'].includes(location.pathname) ? 'search' : null
+    if (type) trackEvent({ customer_id: currentUser.id, session_id: useUserStore.getState().sessionId, event_type: type,
+      event_key: `${useUserStore.getState().sessionId}:${location.key}:${type}` }).catch(() => {})
+  }, [location.key, currentUser.id])
 
   const categories = [
     { label: 'All Discovery', path: '/discover' },
@@ -103,6 +112,7 @@ export const StorefrontLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-cream-100 text-charcoal-900">
+      <Link to="/wishlist" className="bg-cream-50 px-4 py-2 text-xs text-brand text-right">Wishlist ({wishlistProducts.length})</Link>
       {/* Top Bar with Switcher & Portals */}
       <div className="bg-charcoal-900 text-cream-200 text-xs py-2 px-4 border-b border-charcoal-700">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -216,6 +226,7 @@ export const StorefrontLayout: React.FC = () => {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search products"
                   placeholder="Ask StyleSense: 'Find black casual sneakers under 2500' or 'Italian linen shirt'..."
                   className="w-full pl-10 pr-24 py-2.5 sm:py-3 bg-cream-50 hover:bg-cream-100/70 focus:bg-white border border-cream-300 focus:border-brand rounded-full text-xs text-charcoal-900 placeholder:text-charcoal-400 focus:outline-none focus:ring-2 focus:ring-brand/20 transition-all shadow-inner"
                 />

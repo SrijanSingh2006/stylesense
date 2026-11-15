@@ -1,0 +1,5 @@
+
+> stylesense-frontend@2.0.0 test
+> vitest run --reporter=json --outputFile=../qa/vitest-results.json
+
+JSON report written to /workspace/work/stylesense/qa/vitest-results.json

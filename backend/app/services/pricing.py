@@ -9,7 +9,7 @@ def simulate_promotion(db: Session, req: PromotionSimulateRequest) -> PromotionS
 
     base_price = product.price
     base_units = max(40, (product.review_count or 10) * 4) # estimated baseline monthly units
-    base_cost = req.estimated_cost_per_unit or (base_price * 0.42) # default 42% COGS
+    base_cost = req.estimated_cost_per_unit if req.estimated_cost_per_unit is not None else (base_price * 0.42) # default 42% COGS
     base_revenue = base_units * base_price
     base_gross_profit = base_units * (base_price - base_cost)
     base_margin_pct = round((base_gross_profit / base_revenue) * 100.0, 1)

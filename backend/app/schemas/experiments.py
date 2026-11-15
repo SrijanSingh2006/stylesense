@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 from datetime import datetime
@@ -7,11 +8,11 @@ class ExperimentCreate(BaseModel):
     hypothesis: str
     description: Optional[str] = None
     primary_metric: str = "conversion_rate"
-    traffic_percentage: float = 50.0
+    traffic_percentage: float = Field(50.0, ge=0, le=100)
 
 class ExperimentUpdate(BaseModel):
-    status: Optional[str] = None # DRAFT, RUNNING, CONCLUDED, PAUSED
-    traffic_percentage: Optional[float] = None
+    status: Optional[str] = Field(None, pattern="^(DRAFT|RUNNING|CONCLUDED|PAUSED)$")
+    traffic_percentage: Optional[float] = Field(None, ge=0, le=100)
     description: Optional[str] = None
 
 class ExperimentResponse(BaseModel):
@@ -26,10 +27,11 @@ class ExperimentResponse(BaseModel):
     end_date: Optional[datetime]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)
 
 class VariantMetrics(BaseModel):
+    assigned_users: int = 0
+    exposed_users: int = 0
     variant: str
     sample_size: int
     conversions: int
@@ -37,6 +39,8 @@ class VariantMetrics(BaseModel):
     average_order_value: float
 
 class ExperimentResultsResponse(BaseModel):
+    attribution: str = ""
+    relative_lift_available: bool = True
     experiment_id: int
     name: str
     status: str
@@ -57,19 +61,18 @@ class FeatureFlagBase(BaseModel):
     name: str
     description: Optional[str] = None
     enabled: bool = False
-    rollout_percentage: float = 100.0
+    rollout_percentage: float = Field(100.0, ge=0, le=100)
 
 class FeatureFlagCreate(FeatureFlagBase):
     pass
 
 class FeatureFlagUpdate(BaseModel):
     enabled: Optional[bool] = None
-    rollout_percentage: Optional[float] = None
+    rollout_percentage: Optional[float] = Field(None, ge=0, le=100)
     description: Optional[str] = None
 
 class FeatureFlagResponse(FeatureFlagBase):
     id: int
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)

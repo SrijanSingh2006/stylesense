@@ -25,8 +25,8 @@ def get_cohorts(db: Session = Depends(get_db)):
     return calculate_cohort_retention(db)
 
 @router.get("/analytics/products", response_model=List[ProductPerformanceItem], tags=["Analytics"])
-def get_products_analytics(limit: int = Query(50, ge=1, le=200), db: Session = Depends(get_db)):
-    return get_product_performance(db, limit=limit)
+def get_products_analytics(limit: int = Query(50, ge=1, le=200), days: int = Query(30, ge=1, le=365), customer_id: int | None = None, db: Session = Depends(get_db)):
+    return get_product_performance(db, limit=limit, days=days, customer_id=customer_id)
 
 @router.get("/analytics/north-star", response_model=NorthStarResponse, tags=["Analytics"])
 def get_north_star(db: Session = Depends(get_db)):

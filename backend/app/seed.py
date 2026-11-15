@@ -100,16 +100,17 @@ CURATED_IMAGES = {
     ]
 }
 
-def seed_database():
+def seed_database(session_factory=SessionLocal):
     print("==================================================")
     print("🌱 Initializing StyleSense Synthetic Seed Engine")
     print("==================================================")
     
-    # Recreate tables cleanly
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    
-    db: Session = SessionLocal()
+    db: Session = session_factory()
+    if db.query(Product).first():
+        db.close()
+        print("Existing catalogue retained; seeding skipped (no data deleted).")
+        return
+    random.seed(42)
     now = datetime.utcnow()
 
     # 1. Seed Products (120+ products)
@@ -272,6 +273,7 @@ def seed_database():
     db.commit()
 
     flags = [
+        FeatureFlag(name="personalisation", description="Personalized ranking with deterministic customer rollout; disabled users receive popularity rankings", enabled=True, rollout_percentage=100.0),
         FeatureFlag(name="smart_search_nlp", description="Conversational natural language query facet extractor", enabled=True, rollout_percentage=100.0),
         FeatureFlag(name="visual_palette_search", description="Pillow image upload color histogram discovery", enabled=True, rollout_percentage=100.0),
         FeatureFlag(name="complete_the_look", description="Automated cross-category outfit bundle suggestion", enabled=True, rollout_percentage=100.0),

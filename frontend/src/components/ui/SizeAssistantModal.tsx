@@ -1,3 +1,4 @@
+import { errorMessage } from '../../services/errors'
 import React, { useState } from 'react'
 import { X, Ruler, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react'
 import { calculateSize } from '../../services/api'
@@ -44,7 +45,7 @@ export const SizeAssistantModal: React.FC<SizeAssistantModalProps> = ({
       })
       setResult(res)
     } catch (err: any) {
-      setError(err?.response?.data?.detail || 'Failed to calculate size recommendation.')
+      setError(errorMessage(err))
     } finally {
       setLoading(false)
     }

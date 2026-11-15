@@ -1,3 +1,4 @@
+import { errorMessage } from '../../services/errors'
 import React, { useEffect, useState } from 'react'
 import {
   FlaskConical,
@@ -14,6 +15,8 @@ import {
 } from 'lucide-react'
 import {
   fetchExperiments,
+  assignExperiment,
+  trackEvent,
   createExperiment,
   updateExperiment,
   fetchExperimentResults,
@@ -33,6 +36,8 @@ export const ExperimentListPage: React.FC = () => {
   const [description, setDescription] = useState('')
   const [primaryMetric, setPrimaryMetric] = useState('conversion_rate')
   const [trafficPct, setTrafficPct] = useState(50)
+  const [observationCustomer, setObservationCustomer] = useState(1)
+  const [observationNotice, setObservationNotice] = useState('')
 
   const loadData = async () => {
     setLoading(true)
@@ -81,7 +86,7 @@ export const ExperimentListPage: React.FC = () => {
       setDescription('')
       loadData()
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Failed to create experiment')
+      alert(errorMessage(err))
     }
   }
 
@@ -97,6 +102,20 @@ export const ExperimentListPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {selectedExpResults && <section className="p-4 bg-white rounded-xl border border-cream-300 space-y-2">
+        <h2 className="font-semibold">Record an actual demo exposure</h2>
+        <p className="text-xs">Assign a seeded customer and record that the experiment was displayed. Purchases after exposure are attributed for seven days within the experiment window.</p>
+        <label>Customer ID <input aria-label="Observation customer ID" type="number" min="1" max="30" value={observationCustomer} onChange={(e) => setObservationCustomer(Number(e.target.value))} className="border rounded p-2 w-20" /></label>
+        <button className="ml-3 bg-brand text-white rounded p-2" onClick={async () => {
+          try {
+            const assignment = await assignExperiment(selectedExpResults.experiment_id, observationCustomer)
+            await trackEvent({ customer_id: observationCustomer, session_id: `operator-${Date.now()}`, experiment_id: assignment.experiment_id, variant: assignment.variant, event_type: 'experiment_exposure' })
+            setObservationNotice(`Recorded ${assignment.variant} exposure for customer ${observationCustomer}`)
+            loadResults(selectedExpResults.experiment_id)
+          } catch { setObservationNotice('Exposure was not recorded. Check the error and experiment status.') }
+        }}>Assign and record exposure</button>
+        <p role="status" className="text-xs">{observationNotice}</p>
+      </section>}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -251,8 +270,7 @@ export const ExperimentListPage: React.FC = () => {
                       Treatment Group (B)
                     </span>
                     <span className="text-[11px] font-bold text-emerald-700">
-                      {selectedExpResults.relative_lift_pct >= 0 ? '+' : ''}
-                      {selectedExpResults.relative_lift_pct}% Lift
+                      {selectedExpResults.relative_lift_available === false ? 'Unavailable (zero control rate)' : `${selectedExpResults.relative_lift_pct >= 0 ? '+' : ''}${selectedExpResults.relative_lift_pct}% Lift`}
                     </span>
                   </div>
                   <div>
@@ -326,8 +344,8 @@ export const ExperimentListPage: React.FC = () => {
 
             <form onSubmit={handleCreate} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Experiment Name</label>
-                <input
+                <label htmlFor="experimentlist-field-1" className="block font-semibold text-charcoal-700 mb-1">Experiment Name</label>
+                <input id="experimentlist-field-1"
                   type="text"
                   required
                   placeholder="e.g. Complete-the-Look Outfit Bundling"
@@ -338,8 +356,8 @@ export const ExperimentListPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Hypothesis</label>
-                <textarea
+                <label htmlFor="experimentlist-field-2" className="block font-semibold text-charcoal-700 mb-1">Hypothesis</label>
+                <textarea id="experimentlist-field-2"
                   required
                   rows={2}
                   placeholder="e.g. Displaying outfit bundles on PDP will increase multi-item order rate by 18%."
@@ -351,8 +369,8 @@ export const ExperimentListPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-charcoal-700 mb-1">Primary Metric</label>
-                  <select
+                  <label htmlFor="experimentlist-field-3" className="block font-semibold text-charcoal-700 mb-1">Primary Metric</label>
+                  <select id="experimentlist-field-3"
                     value={primaryMetric}
                     onChange={(e) => setPrimaryMetric(e.target.value)}
                     className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-lg text-charcoal-800"
@@ -365,8 +383,8 @@ export const ExperimentListPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-charcoal-700 mb-1">Treatment Traffic %</label>
-                  <input
+                  <label htmlFor="experimentlist-field-4" className="block font-semibold text-charcoal-700 mb-1">Treatment Traffic %</label>
+                  <input id="experimentlist-field-4"
                     type="number"
                     min="10"
                     max="90"

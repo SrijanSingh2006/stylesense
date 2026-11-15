@@ -33,7 +33,7 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       currentUser: DEFAULT_USER,
       sessionId: `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      setCurrentUser: (user) => set({ currentUser: user }),
+      setCurrentUser: (user) => set({ currentUser: user, sessionId: `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}` }),
       resetSession: () =>
         set({
           sessionId: `sess_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,

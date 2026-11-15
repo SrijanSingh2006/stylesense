@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import {
   ResponsiveContainer,
@@ -34,6 +35,7 @@ export const FunnelPage: React.FC = () => {
     load()
   }, [days])
 
+  if (!loading && (!funnel || !cohorts)) return <RequestError />
   if (loading || !funnel || !cohorts) {
     return (
       <div className="py-20 text-center">
@@ -202,7 +204,7 @@ export const FunnelPage: React.FC = () => {
                   <td className="py-3 px-3 text-charcoal-600 font-medium">{row.cohort_size} cust</td>
                   {row.weeks.map((w) => {
                     // Color intensity based on retention percentage
-                    const r = w.retention_rate
+                    const r = w.retention_rate ?? -1
                     let bg = 'bg-cream-100 text-charcoal-700'
                     if (r >= 90) bg = 'bg-emerald-700 text-white font-bold'
                     else if (r >= 40) bg = 'bg-emerald-200 text-emerald-950 font-semibold'
@@ -212,7 +214,7 @@ export const FunnelPage: React.FC = () => {
                     return (
                       <td key={w.week_index} className="py-3 px-2">
                         <span className={`inline-block w-16 py-1.5 rounded-lg text-xs ${bg}`}>
-                          {r}%
+                          {r < 0 ? 'Pending' : `${r}%`}
                         </span>
                       </td>
                     )

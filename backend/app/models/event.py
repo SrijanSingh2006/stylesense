@@ -6,6 +6,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
+    event_key = Column(String(100), unique=True, nullable=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True, index=True)
     session_id = Column(String(100), index=True, nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=True, index=True)

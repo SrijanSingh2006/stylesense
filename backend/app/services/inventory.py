@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, update
 from app.models.product import Product
 from app.models.inventory import InventoryMovement
-from app.models.order import OrderItem
+from app.models.order import OrderItem, Order
 from app.schemas.operations import (
     InventoryOverviewResponse, InventoryAlertItem, InventoryForecastResponse, InventoryMovementCreate
 )
@@ -14,12 +14,13 @@ def record_inventory_movement(db: Session, movement: InventoryMovementCreate) ->
     if not product:
         raise ValueError(f"Product {movement.product_id} not found")
 
-    # Transactional stock update
-    new_stock = product.stock_quantity + movement.quantity
-    if new_stock < 0:
-        raise ValueError(f"Insufficient stock: current {product.stock_quantity}, reduction {abs(movement.quantity)}")
-
-    product.stock_quantity = new_stock
+    changed = db.execute(update(Product).where(Product.id == product.id,
+        Product.stock_quantity + movement.quantity >= 0).values(stock_quantity=Product.stock_quantity + movement.quantity),
+        execution_options={"synchronize_session":False})
+    if changed.rowcount != 1:
+        db.rollback()
+        raise ValueError("Insufficient stock")
+    db.expire(product)
 
     rec = InventoryMovement(
         product_id=movement.product_id,
@@ -44,8 +45,8 @@ def get_inventory_overview(db: Session) -> InventoryOverviewResponse:
     low_stock_cnt = 0
 
     for p in products:
-        daily_sales = max(0.5, (p.review_count or 10) / 45.0)
-        coverage_days = round(p.stock_quantity / daily_sales, 1)
+        daily_sales = sales_in_window(db, p.id) / 28.0
+        coverage_days = round(p.stock_quantity / daily_sales, 1) if daily_sales else 0.0
 
         if p.stock_quantity <= 0:
             status = "OUT_OF_STOCK"
@@ -79,7 +80,8 @@ def get_inventory_overview(db: Session) -> InventoryOverviewResponse:
     alerts.sort(key=lambda a: a.current_stock)
 
     # Simplified annual turnover ratio = Cost of goods sold / average inventory
-    turnover = round(min(8.5, max(2.1, 4.2)), 2)
+    sold = sum(sales_in_window(db, p.id) for p in products)
+    turnover = round(sold / total_units, 2) if total_units else 0.0
 
     return InventoryOverviewResponse(
         total_skus=total_skus,
@@ -96,28 +98,13 @@ def get_inventory_forecast(db: Session, product_id: int) -> InventoryForecastRes
     if not product:
         raise ValueError(f"Product {product_id} not found")
 
-    # Demand estimate from historical orders
     cutoff = datetime.utcnow() - timedelta(days=28)
-    recent_sold = db.query(func.sum(OrderItem.quantity)).filter(
-        OrderItem.product_id == product_id
-    ).scalar() or 0
-
-    daily_rate = round(max(0.4, recent_sold / 28.0), 2)
-    days_left = round(product.stock_quantity / daily_rate, 1) if daily_rate > 0 else 99.0
-    
-    status = "HEALTHY"
-    if product.stock_quantity <= 0:
-        status = "OUT_OF_STOCK"
-    elif product.stock_quantity <= product.reorder_point:
-        status = "REORDER_REQUIRED"
-
-    rec_po = max(40, int(product.reorder_point * 2.5))
-
-    # Weekly sales distribution
-    hist_sales = [
-        int(daily_rate * 7 * factor)
-        for factor in [0.85, 1.1, 0.95, 1.05]
-    ]
+    recent_sold = sales_in_window(db, product_id)
+    daily_rate = round(recent_sold / 28.0, 4)
+    days_left = round(product.stock_quantity / daily_rate, 1) if daily_rate else 0.0
+    status = "OUT_OF_STOCK" if product.stock_quantity <= 0 else ("REORDER_REQUIRED" if product.stock_quantity <= product.reorder_point else "HEALTHY")
+    rec_po = max(0, int(daily_rate * 28 + product.reorder_point - product.stock_quantity))
+    hist_sales = [sales_in_window(db, product_id, cutoff + timedelta(days=i*7), cutoff + timedelta(days=(i+1)*7)) for i in range(4)]
 
     return InventoryForecastResponse(
         product_id=product.id,
@@ -130,3 +117,9 @@ def get_inventory_forecast(db: Session, product_id: int) -> InventoryForecastRes
         recommended_po_quantity=rec_po,
         historical_weekly_sales=hist_sales
     )
+
+def sales_in_window(db, product_id, start=None, end=None):
+    end=end or datetime.utcnow()
+    start=start or end-timedelta(days=28)
+    return db.query(func.sum(OrderItem.quantity)).join(Order).filter(OrderItem.product_id==product_id,
+        Order.status=="COMPLETED",Order.created_at>=start,Order.created_at<end).scalar() or 0

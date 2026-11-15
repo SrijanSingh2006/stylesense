@@ -12,18 +12,18 @@ router = APIRouter()
 @router.get("/roadmap/tasks", response_model=List[RoadmapTaskResponse], tags=["Roadmap"])
 def list_tasks(status: Optional[str] = None, db: Session = Depends(get_db)):
     tasks = get_roadmap_tasks(db, status=status)
-    return [RoadmapTaskResponse.from_orm(t) for t in tasks]
+    return [RoadmapTaskResponse.model_validate(t) for t in tasks]
 
 @router.post("/roadmap/tasks", response_model=RoadmapTaskResponse, tags=["Roadmap"])
 def add_task(data: RoadmapTaskCreate, db: Session = Depends(get_db)):
     task = create_roadmap_task(db, data)
-    return RoadmapTaskResponse.from_orm(task)
+    return RoadmapTaskResponse.model_validate(task)
 
 @router.patch("/roadmap/tasks/{task_id}", response_model=RoadmapTaskResponse, tags=["Roadmap"])
 def modify_task(task_id: int, data: RoadmapTaskUpdate, db: Session = Depends(get_db)):
     try:
         task = update_roadmap_task(db, task_id, data)
-        return RoadmapTaskResponse.from_orm(task)
+        return RoadmapTaskResponse.model_validate(task)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

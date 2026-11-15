@@ -1,10 +1,14 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Text, JSON
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Text, JSON, CheckConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.session import Base
 
 class Product(Base):
     __tablename__ = "products"
+    __table_args__ = (
+        CheckConstraint("stock_quantity >= 0", name="ck_product_stock_nonnegative"),
+        CheckConstraint("price >= 0", name="ck_product_price_nonnegative"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
     sku = Column(String(50), unique=True, index=True, nullable=False)

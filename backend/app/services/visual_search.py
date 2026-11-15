@@ -96,7 +96,7 @@ async def process_visual_search(file: UploadFile, db: Session) -> VisualSearchRe
         matching_products = db.query(Product).filter(Product.active == True).order_by(Product.rating.desc()).limit(10).all()
 
     return VisualSearchResponse(
-        items=[ProductResponse.from_orm(p) for p in matching_products],
+        items=[ProductResponse.model_validate(p) for p in matching_products],
         extracted_colour=dominant_colour,
         extracted_histogram=hist,
         algorithm="pillow_color_histogram_cosine",

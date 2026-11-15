@@ -39,7 +39,7 @@ def calculate_customer_segments(db: Session) -> SegmentationResponse:
             freq = o.order_count
             monetary = round(float(o.total_spend or 0.0), 2)
         else:
-            recency_days = (now - c.created_at).days + 15
+            recency_days = max(0, (now - c.created_at).days)
             freq = 0
             monetary = 0.0
 

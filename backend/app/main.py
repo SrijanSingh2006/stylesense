@@ -7,8 +7,7 @@ from app.api.api import api_router
 from app.db.session import engine, Base
 import app.db.base # Ensure all models are registered
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+# Schema changes are applied explicitly with `alembic upgrade head`.
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -44,3 +43,16 @@ def root():
         "docs": "/docs",
         "api_v1": settings.API_V1_STR
     }
+
+# Keep internal database details out of public API errors.
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
+import logging
+@app.exception_handler(SQLAlchemyError)
+async def database_error(request, exc):
+    logging.getLogger(__name__).error("Database request failed", exc_info=exc)
+    return JSONResponse(status_code=503, content={"detail":"Database temporarily unavailable. Please retry."})
+@app.exception_handler(Exception)
+async def unexpected_error(request, exc):
+    logging.getLogger(__name__).error("Request failed", exc_info=exc)
+    return JSONResponse(status_code=500, content={"detail":"Request could not be completed. Please retry."})

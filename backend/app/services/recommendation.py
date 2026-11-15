@@ -28,13 +28,14 @@ def get_recommendations_for_customer(
     if not all_products:
         return RecommendationResponse(customer_id=customer_id, strategy="empty", items=[])
 
-    if not customer:
+    from app.services.flags import feature_enabled
+    if not customer or not feature_enabled(db, "personalisation", customer_id):
         # Cold start fallback based on popularity and high ratings
         ranked = sorted(all_products, key=lambda p: (p.rating * math.log(p.review_count + 2)), reverse=True)
         items = []
         for p in ranked[:limit]:
             items.append(RecommendationItem(
-                product=ProductResponse.from_orm(p),
+                product=ProductResponse.model_validate(p),
                 score=round(p.rating / 5.0, 3),
                 explanation="Popular top-rated discovery across StyleSense shoppers."
             ))
@@ -114,7 +115,7 @@ def get_recommendations_for_customer(
         c = prod.category or "General"
         if cat_counts.get(c, 0) < 3 or len(diverse_items) >= limit:
             diverse_items.append(RecommendationItem(
-                product=ProductResponse.from_orm(prod),
+                product=ProductResponse.model_validate(prod),
                 score=score,
                 explanation=exp
             ))
@@ -168,8 +169,8 @@ def get_complete_look(db: Session, primary_product_id: int) -> CompleteLookRespo
     styling_notes = f"Styled around the {primary.name}. Complementary silhouette balances {primary.colour} tones with tailored versatile pairings."
 
     return CompleteLookResponse(
-        primary_product=ProductResponse.from_orm(primary),
-        outfit_items=[ProductResponse.from_orm(p) for p in outfit_items],
+        primary_product=ProductResponse.model_validate(primary),
+        outfit_items=[ProductResponse.model_validate(p) for p in outfit_items],
         total_outfit_price=round(total_price, 2),
         styling_notes=styling_notes
     )

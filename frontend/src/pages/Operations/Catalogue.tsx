@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import { CheckSquare, AlertCircle, Check, Sparkles, RefreshCw } from 'lucide-react'
 import { fetchCatalogueQuality, resolveCatalogueIssue } from '../../services/api'
@@ -36,6 +37,7 @@ export const CataloguePage: React.FC = () => {
     }
   }
 
+  if (!loading && (!data)) return <RequestError />
   if (loading || !data) {
     return (
       <div className="py-20 text-center">

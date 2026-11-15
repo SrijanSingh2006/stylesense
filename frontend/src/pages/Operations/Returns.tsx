@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import { RotateCcw, AlertOctagon, HelpCircle, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react'
 import { fetchReturns } from '../../services/api'
@@ -22,6 +23,7 @@ export const ReturnsPage: React.FC = () => {
     load()
   }, [])
 
+  if (!loading && (!data)) return <RequestError />
   if (loading || !data) {
     return (
       <div className="py-20 text-center">

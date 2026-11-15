@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import { Users, Crown, Heart, Sparkles, UserPlus, AlertOctagon, Moon, Search } from 'lucide-react'
 import { fetchSegments } from '../../services/api'
@@ -24,6 +25,7 @@ export const SegmentationPage: React.FC = () => {
     load()
   }, [])
 
+  if (!loading && (!data)) return <RequestError />
   if (loading || !data) {
     return (
       <div className="py-20 text-center">

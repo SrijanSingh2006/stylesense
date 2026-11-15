@@ -40,3 +40,5 @@ api_router.include_router(pricing.router)
 api_router.include_router(roadmap.router)
 api_router.include_router(releases.router)
 api_router.include_router(feedback.router)
+from app.api.routes import wishlist
+api_router.include_router(wishlist.router)

@@ -1,3 +1,4 @@
+import { riceScore } from '../../utils/commerce'
 import React, { useEffect, useState } from 'react'
 import {
   GitPullRequest,
@@ -41,9 +42,7 @@ export const RoadmapPage: React.FC = () => {
   const [confidence, setConfidence] = useState(80)
   const [effort, setEffort] = useState(4.0)
 
-  const computedRice = Math.round(
-    ((reach * impact * (confidence / 100)) / Math.max(0.5, effort)) * 10
-  ) / 10
+  const computedRice = effort > 0 ? riceScore(reach, impact, confidence, effort) : 0
 
   const load = async () => {
     setLoading(true)
@@ -217,8 +216,8 @@ export const RoadmapPage: React.FC = () => {
 
             <form onSubmit={handleCreateTask} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Initiative Title</label>
-                <input
+                <label htmlFor="roadmap-field-1" className="block font-semibold text-charcoal-700 mb-1">Initiative Title</label>
+                <input id="roadmap-field-1"
                   type="text"
                   required
                   placeholder="e.g. Dynamic Outfit Bundle Builder"
@@ -229,8 +228,8 @@ export const RoadmapPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Description</label>
-                <textarea
+                <label htmlFor="roadmap-field-2" className="block font-semibold text-charcoal-700 mb-1">Description</label>
+                <textarea id="roadmap-field-2"
                   rows={2}
                   placeholder="Problem statement & expected commercial uplift..."
                   value={description}
@@ -241,8 +240,8 @@ export const RoadmapPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-charcoal-700 mb-1">Owner</label>
-                  <input
+                  <label htmlFor="roadmap-field-3" className="block font-semibold text-charcoal-700 mb-1">Owner</label>
+                  <input id="roadmap-field-3"
                     type="text"
                     value={owner}
                     onChange={(e) => setOwner(e.target.value)}
@@ -250,8 +249,8 @@ export const RoadmapPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-charcoal-700 mb-1">Priority</label>
-                  <select
+                  <label htmlFor="roadmap-field-4" className="block font-semibold text-charcoal-700 mb-1">Priority</label>
+                  <select id="roadmap-field-4"
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
                     className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-lg text-charcoal-800"
@@ -273,8 +272,8 @@ export const RoadmapPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] text-charcoal-500 block">Reach (Users / Qtr)</label>
-                    <input
+                    <label htmlFor="roadmap-field-5" className="text-[11px] text-charcoal-500 block">Reach (Users / Qtr)</label>
+                    <input id="roadmap-field-5"
                       type="number"
                       value={reach}
                       onChange={(e) => setReach(Number(e.target.value))}
@@ -282,8 +281,8 @@ export const RoadmapPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-charcoal-500 block">Impact (0.25 to 3.0)</label>
-                    <input
+                    <label htmlFor="roadmap-field-6" className="text-[11px] text-charcoal-500 block">Impact (0.25 to 3.0)</label>
+                    <input id="roadmap-field-6"
                       type="number"
                       step="0.25"
                       value={impact}
@@ -292,8 +291,8 @@ export const RoadmapPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-charcoal-500 block">Confidence (50 - 100%)</label>
-                    <input
+                    <label htmlFor="roadmap-field-7" className="text-[11px] text-charcoal-500 block">Confidence (50 - 100%)</label>
+                    <input id="roadmap-field-7"
                       type="number"
                       value={confidence}
                       onChange={(e) => setConfidence(Number(e.target.value))}
@@ -301,8 +300,8 @@ export const RoadmapPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-charcoal-500 block">Effort (Person-Weeks)</label>
-                    <input
+                    <label htmlFor="roadmap-field-8" className="text-[11px] text-charcoal-500 block">Effort (Person-Weeks)</label>
+                    <input id="roadmap-field-8"
                       type="number"
                       step="0.5"
                       value={effort}

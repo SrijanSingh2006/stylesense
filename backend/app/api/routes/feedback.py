@@ -11,7 +11,7 @@ router = APIRouter()
 @router.get("/feedback", response_model=List[FeedbackResponse], tags=["Feedback"])
 def list_feedback(db: Session = Depends(get_db)):
     items = db.query(Feedback).order_by(Feedback.created_at.desc()).all()
-    return [FeedbackResponse.from_orm(f) for f in items]
+    return [FeedbackResponse.model_validate(f) for f in items]
 
 @router.post("/feedback", response_model=FeedbackResponse, tags=["Feedback"])
 def add_feedback(data: FeedbackCreate, db: Session = Depends(get_db)):
@@ -31,7 +31,7 @@ def add_feedback(data: FeedbackCreate, db: Session = Depends(get_db)):
     db.add(fb)
     db.commit()
     db.refresh(fb)
-    return FeedbackResponse.from_orm(fb)
+    return FeedbackResponse.model_validate(fb)
 
 @router.patch("/feedback/{feedback_id}", response_model=FeedbackResponse, tags=["Feedback"])
 def modify_feedback(feedback_id: int, data: FeedbackUpdate, db: Session = Depends(get_db)):
@@ -48,4 +48,4 @@ def modify_feedback(feedback_id: int, data: FeedbackUpdate, db: Session = Depend
 
     db.commit()
     db.refresh(fb)
-    return FeedbackResponse.from_orm(fb)
+    return FeedbackResponse.model_validate(fb)

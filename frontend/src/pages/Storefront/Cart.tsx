@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ShoppingBag,
@@ -13,7 +13,8 @@ import {
 } from 'lucide-react'
 import { useCartStore } from '../../store/useCartStore'
 import { useUserStore } from '../../store/useUserStore'
-import { createOrder } from '../../services/api'
+import { errorMessage } from '../../services/errors'
+import { createOrder, trackEvent } from '../../services/api'
 
 export const CartPage: React.FC = () => {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore()
@@ -25,8 +26,9 @@ export const CartPage: React.FC = () => {
   const [orderConfirmed, setOrderConfirmed] = useState<any | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const checkoutRef = useRef<{ fingerprint: string; key: string } | null>(null)
   const subtotal = getTotal()
-  const shipping = subtotal >= 1500 || subtotal === 0 ? 0 : 150
+  const shipping = 0 // Free delivery in the simulated checkout, consistent with the server.
   const total = subtotal + shipping
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -37,7 +39,15 @@ export const CartPage: React.FC = () => {
     setError(null)
 
     try {
+      const fingerprint = JSON.stringify({ customer: currentUser.id, items })
+      if (!checkoutRef.current || checkoutRef.current.fingerprint !== fingerprint) {
+        const stored = sessionStorage.getItem('stylesense-checkout')
+        const previous = stored ? JSON.parse(stored) : null
+        checkoutRef.current = previous?.fingerprint === fingerprint ? previous : { fingerprint, key: crypto.randomUUID() }
+        sessionStorage.setItem('stylesense-checkout', JSON.stringify(checkoutRef.current))
+      }
       const orderPayload = {
+        idempotency_key: checkoutRef.current!.key,
         customer_id: currentUser.id,
         session_id: sessionId,
         items: items.map((i) => ({
@@ -47,14 +57,13 @@ export const CartPage: React.FC = () => {
         })),
       }
 
+      await trackEvent({ customer_id: currentUser.id, session_id: sessionId, event_type: 'checkout_started' })
       const res = await createOrder(orderPayload)
       setOrderConfirmed(res)
       clearCart()
+      sessionStorage.removeItem('stylesense-checkout')
     } catch (err: any) {
-      setError(
-        err?.response?.data?.detail ||
-          'Order processing failed. Transaction safely rolled back.'
-      )
+      setError(errorMessage(err))
     } finally {
       setSubmitting(false)
     }
@@ -255,10 +264,10 @@ export const CartPage: React.FC = () => {
             {/* Simulated Customer & Address details */}
             <div className="space-y-3 pt-3 border-t border-cream-200">
               <div>
-                <label className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
+                <label htmlFor="cart-field-1" className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
                   Active Shopper
                 </label>
-                <input
+                <input id="cart-field-1"
                   type="text"
                   disabled
                   value={`${currentUser.display_name} (ID: ${currentUser.id})`}
@@ -267,10 +276,10 @@ export const CartPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
+                <label htmlFor="cart-field-2" className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
                   Delivery Address
                 </label>
-                <textarea
+                <textarea id="cart-field-2"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   rows={2}
@@ -280,10 +289,10 @@ export const CartPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
+                <label htmlFor="cart-field-3" className="block text-[11px] font-bold text-charcoal-700 uppercase tracking-wider mb-1">
                   Payment Method
                 </label>
-                <select
+                <select id="cart-field-3"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="w-full p-2.5 text-xs bg-white border border-cream-300 rounded-lg text-charcoal-800"

@@ -2,17 +2,18 @@ from typing import List, Dict, Any
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models.returns import Return
-from app.models.order import Order
+from app.models.order import Order, OrderItem
 from app.models.product import Product
 from app.schemas.operations import (
     ReturnOverviewResponse, ReturnReasonBreakdown, CategoryReturnItem
 )
 
 def get_return_overview(db: Session) -> ReturnOverviewResponse:
-    total_orders = db.query(Order).count() or 1
-    returns = db.query(Return).all()
-    total_returns = len(returns)
-    overall_rate = round((total_returns / total_orders) * 100.0, 2)
+    eligible={o.id for o in db.query(Order).filter(Order.status.in_(["COMPLETED","RETURNED"])).all()}
+    total_orders=len(eligible)
+    returns=[r for r in db.query(Return).all() if r.order_id in eligible]
+    total_returns=len(returns)
+    overall_rate=round(len({r.order_id for r in returns})/total_orders*100,2) if total_orders else 0.0
 
     # Reason breakdown
     reason_counts: Dict[str, int] = {}
@@ -35,21 +36,24 @@ def get_return_overview(db: Session) -> ReturnOverviewResponse:
 
     # Category breakdown
     cat_items = []
-    categories = ["Shirts", "T-Shirts", "Jeans", "Trousers", "Dresses", "Footwear", "Jackets"]
+    categories = [c[0] for c in db.query(Product.category).distinct().all()]
     for cat in categories:
         cat_prods = db.query(Product.id).filter(Product.category == cat).all()
         prod_ids = [p[0] for p in cat_prods]
         if not prod_ids:
             continue
-        cat_ret_cnt = db.query(Return).filter(Return.product_id.in_(prod_ids)).count()
-        cat_order_est = max(cat_ret_cnt + 10, len(prod_ids) * 8)
-        rate = round((cat_ret_cnt / cat_order_est) * 100.0, 1)
+        category_returns=[r for r in returns if r.product_id in prod_ids]
+        cat_ret_cnt=len({r.order_id for r in category_returns})
+        cat_order_est=len({i.order_id for i in db.query(OrderItem).filter(OrderItem.product_id.in_(prod_ids)).all() if i.order_id in eligible})
+        rate=round(cat_ret_cnt/cat_order_est*100,1) if cat_order_est else 0.0
+        from collections import Counter
+        reasons_for_category=Counter(r.return_reason for r in category_returns)
         cat_items.append(CategoryReturnItem(
             category=cat,
             total_orders=cat_order_est,
             returned_orders=cat_ret_cnt,
             return_rate=rate,
-            primary_reason="Size mismatch" if cat in ["Jeans", "Footwear", "Shirts"] else "Fabric feel"
+            primary_reason=reasons_for_category.most_common(1)[0][0] if reasons_for_category else "No observed returns"
         ))
 
     # Top problematic products
@@ -68,14 +72,11 @@ def get_return_overview(db: Session) -> ReturnOverviewResponse:
                 "category": prod.category,
                 "returns_count": rcnt,
                 "heuristic_risk_score": min(95, 40 + (rcnt * 12)),
-                "primary_complaint": "Runs 1 size smaller than standard industry baseline"
+                "primary_complaint": next((r.return_reason for r in returns if r.product_id==pid), "No eligible returns")
             })
 
-    recommendations = [
-        "Calibrate Size Engine parameters: 42% of returns are driven by waist sizing variance in denim lines.",
-        "Add visual size comparison chart on high-return SKUs to clarify slim vs regular cut profiles.",
-        "Trigger proactive Fit Assist modal when shoppers select borderline XS or XL measurements."
-    ]
+    recommendations = [f"Size/fit reasons account for {size_pct}% of observed return records. Review product measurements and size guidance.",
+                       "Risk scores are unvalidated heuristics; inspect actual return reasons before taking action."]
 
     return ReturnOverviewResponse(
         total_orders=total_orders,

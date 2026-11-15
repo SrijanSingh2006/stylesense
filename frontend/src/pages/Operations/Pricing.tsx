@@ -72,10 +72,10 @@ export const PricingPage: React.FC = () => {
 
           {/* Product selector */}
           <div>
-            <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+            <label htmlFor="pricing-field-1" className="block text-xs font-semibold text-charcoal-700 mb-1">
               Target Product SKU
             </label>
-            <select
+            <select id="pricing-field-1"
               value={selectedProductId}
               onChange={(e) => setSelectedProductId(Number(e.target.value))}
               className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-xl text-xs font-medium text-charcoal-800"
@@ -95,7 +95,7 @@ export const PricingPage: React.FC = () => {
               <span className="font-bold text-brand">{discountPct}% OFF</span>
             </div>
             <input
-              type="range"
+              type="range" aria-label="Discount percentage"
               min="0"
               max="70"
               step="5"
@@ -117,7 +117,7 @@ export const PricingPage: React.FC = () => {
               <span className="font-mono font-bold text-charcoal-900">{elasticity}</span>
             </div>
             <input
-              type="range"
+              type="range" aria-label="Price elasticity"
               min="-3.0"
               max="-0.8"
               step="0.1"
@@ -134,10 +134,10 @@ export const PricingPage: React.FC = () => {
 
           {/* Unit Cost Override */}
           <div>
-            <label className="block text-xs font-semibold text-charcoal-700 mb-1">
+            <label htmlFor="pricing-field-2" className="block text-xs font-semibold text-charcoal-700 mb-1">
               Estimated Unit Cost (COGS in ₹, optional)
             </label>
-            <input
+            <input id="pricing-field-2"
               type="number"
               placeholder="Default 42% of baseline price"
               value={costPerUnit}

@@ -152,7 +152,7 @@ def search_products(db: Session, req: SearchRequest) -> SearchResponse:
     pages = (total + req.limit - 1) // req.limit if total > 0 else 1
 
     return SearchResponse(
-        items=[ProductResponse.from_orm(p) for p in paginated],
+        items=[ProductResponse.model_validate(p) for p in paginated],
         total=total,
         page=req.page,
         limit=req.limit,

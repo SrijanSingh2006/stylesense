@@ -47,3 +47,10 @@ uploads/*
 *.swp
 *.swo
 .DS_Store
+
+# Test caches and retained failure artifacts
+.pytest_cache/
+frontend/test-results/
+frontend/playwright-report/
+qa/browser-artifacts/
+*.db.backup-*

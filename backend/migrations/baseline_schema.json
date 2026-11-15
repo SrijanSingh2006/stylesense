@@ -1,0 +1,162 @@
+{
+  "customers": [
+    "id",
+    "display_name",
+    "email",
+    "preferred_categories",
+    "preferred_colours",
+    "preferred_brands",
+    "budget_min",
+    "budget_max",
+    "created_at"
+  ],
+  "experiments": [
+    "id",
+    "name",
+    "hypothesis",
+    "description",
+    "primary_metric",
+    "status",
+    "traffic_percentage",
+    "start_date",
+    "end_date",
+    "created_at"
+  ],
+  "feature_flags": [
+    "id",
+    "name",
+    "description",
+    "enabled",
+    "rollout_percentage",
+    "updated_at"
+  ],
+  "products": [
+    "id",
+    "sku",
+    "name",
+    "brand",
+    "category",
+    "subcategory",
+    "description",
+    "colour",
+    "dominant_colour",
+    "price",
+    "original_price",
+    "sizes_available",
+    "size_chart",
+    "fit_type",
+    "material",
+    "occasion",
+    "tags",
+    "rating",
+    "review_count",
+    "stock_quantity",
+    "reorder_point",
+    "image_url",
+    "active",
+    "created_at"
+  ],
+  "releases": [
+    "id",
+    "version",
+    "name",
+    "target_date",
+    "status",
+    "readiness_percentage",
+    "checklist",
+    "release_notes",
+    "created_at",
+    "updated_at"
+  ],
+  "roadmap_tasks": [
+    "id",
+    "title",
+    "description",
+    "owner",
+    "status",
+    "priority",
+    "reach",
+    "impact",
+    "confidence",
+    "effort",
+    "rice_score",
+    "due_date",
+    "created_at"
+  ],
+  "catalogue_issues": [
+    "id",
+    "product_id",
+    "issue_type",
+    "severity",
+    "description",
+    "suggested_action",
+    "is_resolved",
+    "resolved_at",
+    "created_at"
+  ],
+  "events": [
+    "id",
+    "customer_id",
+    "session_id",
+    "product_id",
+    "event_type",
+    "metadata",
+    "experiment_id",
+    "variant",
+    "occurred_at"
+  ],
+  "experiment_assignments": [
+    "id",
+    "experiment_id",
+    "customer_id",
+    "variant",
+    "assigned_at"
+  ],
+  "feedback": [
+    "id",
+    "customer_id",
+    "product_id",
+    "feedback_type",
+    "rating",
+    "comment",
+    "source",
+    "owner",
+    "priority",
+    "sentiment",
+    "status",
+    "created_at"
+  ],
+  "inventory_movements": [
+    "id",
+    "product_id",
+    "movement_type",
+    "quantity",
+    "reference",
+    "created_at"
+  ],
+  "orders": [
+    "id",
+    "customer_id",
+    "session_id",
+    "total_amount",
+    "status",
+    "created_at"
+  ],
+  "order_items": [
+    "id",
+    "order_id",
+    "product_id",
+    "quantity",
+    "unit_price",
+    "selected_size"
+  ],
+  "returns": [
+    "id",
+    "order_id",
+    "product_id",
+    "customer_id",
+    "return_reason",
+    "condition",
+    "created_at"
+  ]
+}

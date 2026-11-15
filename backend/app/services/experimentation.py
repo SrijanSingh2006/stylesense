@@ -24,6 +24,14 @@ def assign_customer_variant(db: Session, experiment_id: int, customer_id: int) -
         return existing.variant
 
     exp = db.query(Experiment).filter(Experiment.id == experiment_id).first()
+    from datetime import datetime
+    from fastapi import HTTPException
+    from app.models.customer import Customer
+    from sqlalchemy.exc import IntegrityError
+    if not exp or not db.get(Customer, customer_id):
+        raise HTTPException(404, "Experiment or customer not found")
+    if exp.status != "RUNNING" or (exp.end_date and exp.end_date <= datetime.utcnow()) or (exp.start_date and exp.start_date > datetime.utcnow()):
+        raise HTTPException(409, "Experiment is not accepting new assignments")
     traffic_pct = exp.traffic_percentage if exp else 50.0
 
     # Deterministic hash using SHA-256
@@ -39,105 +47,77 @@ def assign_customer_variant(db: Session, experiment_id: int, customer_id: int) -
         variant=variant
     )
     db.add(assignment)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        return db.query(ExperimentAssignment).filter_by(experiment_id=experiment_id, customer_id=customer_id).one().variant
     db.refresh(assignment)
 
     return variant
 
 def calculate_experiment_results(db: Session, experiment_id: int) -> ExperimentResultsResponse:
-    exp = db.query(Experiment).filter(Experiment.id == experiment_id).first()
+    from datetime import datetime, timedelta
+    from scipy.stats import fisher_exact
+    exp = db.get(Experiment, experiment_id)
     if not exp:
-        raise ValueError(f"Experiment {experiment_id} not found")
-
-    assignments = db.query(ExperimentAssignment).filter(
-        ExperimentAssignment.experiment_id == experiment_id
-    ).all()
-
-    control_customers = {a.customer_id for a in assignments if a.variant == "control"}
-    treatment_customers = {a.customer_id for a in assignments if a.variant == "treatment"}
-
-    n_ctrl = max(len(control_customers), 25)
-    n_treat = max(len(treatment_customers), 25)
-
-    # Conversions count based on orders or purchase events
-    ctrl_orders = db.query(Order).filter(
-        Order.customer_id.in_(control_customers),
-        Order.status == "COMPLETED"
-    ).all()
-    treat_orders = db.query(Order).filter(
-        Order.customer_id.in_(treatment_customers),
-        Order.status == "COMPLETED"
-    ).all()
-
-    x_ctrl = min(len(ctrl_orders), n_ctrl)
-    x_treat = min(len(treat_orders), n_treat)
-
-    # Realistic floor so seeded experiments show valid statistical dynamics
-    if x_ctrl == 0:
-        x_ctrl = int(n_ctrl * 0.12)
-    if x_treat == 0:
-        x_treat = int(n_treat * 0.18)
-
-    p_ctrl = x_ctrl / n_ctrl
-    p_treat = x_treat / n_treat
-    
-    ctrl_aov = round(sum(o.total_amount for o in ctrl_orders) / max(len(ctrl_orders), 1), 2) or 2150.0
-    treat_aov = round(sum(o.total_amount for o in treat_orders) / max(len(treat_orders), 1), 2) or 2480.0
-
-    abs_diff = round(p_treat - p_ctrl, 4)
-    rel_lift = round(((p_treat - p_ctrl) / p_ctrl) * 100.0, 2) if p_ctrl > 0 else 0.0
-
-    # Two-Proportion Z-Test
-    p_pooled = (x_ctrl + x_treat) / (n_ctrl + n_treat)
-    se_pooled = math.sqrt(p_pooled * (1.0 - p_pooled) * ((1.0 / n_ctrl) + (1.0 / n_treat))) if 0 < p_pooled < 1 else 0.001
-    
-    z_score = round((p_treat - p_ctrl) / se_pooled, 3) if se_pooled > 0 else 0.0
-    p_value = round(2.0 * (1.0 - normal_cdf(abs(z_score))), 4)
-
-    # 95% Confidence Interval for difference
-    se_diff = math.sqrt((p_ctrl * (1.0 - p_ctrl) / n_ctrl) + (p_treat * (1.0 - p_treat) / n_treat))
-    margin = 1.96 * se_diff
-    ci_lower = round((p_treat - p_ctrl) - margin, 4)
-    ci_upper = round((p_treat - p_ctrl) + margin, 4)
-
-    sample_adequate = (n_ctrl >= 30 and n_treat >= 30 and x_ctrl >= 5 and x_treat >= 5)
-    is_sig = (p_value < 0.05) and sample_adequate
-
-    if is_sig and rel_lift > 0:
-        recommendation = "Roll out Treatment: Statistically significant positive lift observed with p < 0.05."
-    elif not sample_adequate:
-        recommendation = "Continue data collection: Sample size does not yet meet minimum statistical power threshold."
-    elif is_sig and rel_lift < 0:
-        recommendation = "Halt experiment: Treatment exhibited a statistically significant negative impact."
+        raise ValueError("Experiment not found")
+    now = datetime.utcnow()
+    start = exp.start_date or now
+    end = min(exp.end_date or now, now)
+    assignments = db.query(ExperimentAssignment).filter_by(experiment_id=experiment_id).all()
+    exposures = db.query(Event).filter(Event.experiment_id == experiment_id, Event.event_type == "experiment_exposure",
+                                      Event.occurred_at >= start, Event.occurred_at <= end).all()
+    metrics = []
+    for variant in ("control", "treatment"):
+        assigned = {a.customer_id:a for a in assignments if a.variant == variant}
+        exposed = {}
+        for e in exposures:
+            a = assigned.get(e.customer_id)
+            if a and e.variant == a.variant and e.occurred_at >= a.assigned_at:
+                exposed[e.customer_id] = min(exposed.get(e.customer_id, e.occurred_at), e.occurred_at)
+        orders = db.query(Order).filter(Order.status == "COMPLETED", Order.created_at >= start, Order.created_at <= end).all()
+        eligible = [o for o in orders if o.customer_id in exposed and exposed[o.customer_id] <= o.created_at <= min(end, exposed[o.customer_id]+timedelta(days=7))]
+        converters = {o.customer_id for o in eligible}
+        n, x = len(exposed), len(converters)
+        metrics.append(VariantMetrics(variant=variant, sample_size=n, assigned_users=len(assigned), exposed_users=n,
+             conversions=x, conversion_rate=round(100*x/n, 2) if n else 0.0,
+             average_order_value=round(float(sum(o.total_amount for o in eligible))/len(eligible),2) if eligible else 0.0))
+    control, treatment = metrics
+    n1, n2, x1, x2 = control.sample_size, treatment.sample_size, control.conversions, treatment.conversions
+    p1, p2 = x1/n1 if n1 else 0, x2/n2 if n2 else 0
+    diff = p2-p1
+    adequate = bool(n1 and n2 and min(x1,n1-x1,x2,n2-x2)>=5)
+    pvalue, z, ci, test = 1.0, 0.0, [-1.0, 1.0], "Insufficient observations"
+    if n1 and n2:
+        pooled = (x1+x2)/(n1+n2)
+        se = math.sqrt(pooled*(1-pooled)*(1/n1+1/n2))
+        z = diff/se if se else 0.0
+        if adequate:
+            pvalue = math.erfc(abs(z)/math.sqrt(2))
+            test = "Two-Proportion Z-Test (Pooled Variance)"
+        else:
+            pvalue = float(fisher_exact([[x1,n1-x1],[x2,n2-x2]]).pvalue)
+            test = "Fisher exact test (small samples)"
+        def wilson(x,n):
+            p=x/n; d=1+1.96**2/n
+            center=(p+1.96**2/(2*n))/d
+            half=1.96*math.sqrt(p*(1-p)/n+1.96**2/(4*n*n))/d
+            return center-half, center+half
+        l1,u1=wilson(x1,n1);l2,u2=wilson(x2,n2)
+        ci=[max(-1,diff-math.sqrt((p2-l2)**2+(u1-p1)**2)),min(1,diff+math.sqrt((u2-p2)**2+(p1-l1)**2))]
+    supported = exp.primary_metric == "conversion_rate"
+    significant = bool(n1 and n2 and pvalue < .05 and supported)
+    if not supported:
+        decision="Purchase conversion shown as a diagnostic; selected primary metric is not supported for a launch decision."
+    elif not n1 or not n2:
+        decision="Insufficient evidence: record actual exposures in both variants."
+    elif significant:
+        decision="Observed significant conversion difference. Review guardrails and planned sample size before rollout."
     else:
-        recommendation = "Inconclusive: Observed difference is within normal sampling variance (p >= 0.05)."
-
-    return ExperimentResultsResponse(
-        experiment_id=exp.id,
-        name=exp.name,
-        status=exp.status,
-        primary_metric=exp.primary_metric,
-        control=VariantMetrics(
-            variant="control",
-            sample_size=n_ctrl,
-            conversions=x_ctrl,
-            conversion_rate=round(p_ctrl * 100.0, 2),
-            average_order_value=ctrl_aov
-        ),
-        treatment=VariantMetrics(
-            variant="treatment",
-            sample_size=n_treat,
-            conversions=x_treat,
-            conversion_rate=round(p_treat * 100.0, 2),
-            average_order_value=treat_aov
-        ),
-        absolute_difference=abs_diff,
-        relative_lift_pct=rel_lift,
-        p_value=p_value,
-        z_score=z_score,
-        confidence_interval_95=[ci_lower, ci_upper],
-        is_statistically_significant=is_sig,
-        statistical_test="Two-Proportion Z-Test (Pooled Variance)",
-        sample_size_adequate=sample_adequate,
-        decision_recommendation=recommendation
-    )
+        decision="Inconclusive: continue collection according to the prespecified experiment plan."
+    return ExperimentResultsResponse(experiment_id=exp.id,name=exp.name,status=exp.status,primary_metric=exp.primary_metric,
+          control=control,treatment=treatment,absolute_difference=round(diff,6),relative_lift_pct=round(diff/p1*100,2) if p1 else 0.0,
+          relative_lift_available=bool(p1),p_value=pvalue,z_score=round(z,6),confidence_interval_95=ci,
+          is_statistically_significant=significant,statistical_test=test,sample_size_adequate=adequate,decision_recommendation=decision,
+          attribution="First valid exposure, then completed order within 7 days and experiment UTC start/end. Unique customers; no imputation.")

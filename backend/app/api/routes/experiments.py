@@ -49,9 +49,12 @@ def update_experiment(experiment_id: int, data: ExperimentUpdate, db: Session = 
         raise HTTPException(status_code=404, detail="Experiment not found")
     
     if data.status is not None:
+        if exp.status == "CONCLUDED" and data.status != "CONCLUDED":
+            raise HTTPException(409, "Concluded experiments cannot be restarted")
         exp.status = data.status
-        if data.status == "RUNNING" and not exp.start_date:
-            exp.start_date = datetime.utcnow()
+        if data.status == "RUNNING":
+            if not exp.start_date: exp.start_date = datetime.utcnow()
+            exp.end_date = None
         elif data.status in ["CONCLUDED", "PAUSED"] and not exp.end_date:
             exp.end_date = datetime.utcnow()
 

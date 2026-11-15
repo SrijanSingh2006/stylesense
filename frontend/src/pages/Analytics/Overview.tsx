@@ -1,3 +1,4 @@
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import {
   TrendingUp,
@@ -28,7 +29,7 @@ export const OverviewPage: React.FC = () => {
         const [m, ns, p] = await Promise.all([
           fetchOverviewMetrics(days),
           fetchNorthStar(),
-          fetchProductPerformance(15),
+          fetchProductPerformance(15, days),
         ])
         setMetrics(m)
         setNorthStar(ns)
@@ -42,6 +43,7 @@ export const OverviewPage: React.FC = () => {
     load()
   }, [days])
 
+  if (!loading && (!metrics || !northStar)) return <RequestError />
   if (loading || !metrics || !northStar) {
     return (
       <div className="py-20 text-center">

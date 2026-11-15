@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import { trackEvent } from '../../services/api'
+import { useUserStore } from '../../store/useUserStore'
+import { discountPercent } from '../../utils/commerce'
+import React, { useState, useEffect } from 'react'
+import { WishlistButton } from './WishlistButton'
 import { Link } from 'react-router-dom'
 import { Heart, Star, ShoppingBag, Eye } from 'lucide-react'
 import type { Product } from '../../types'
@@ -15,8 +19,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onQuickView,
   explanation,
 }) => {
-  const [wishlisted, setWishlisted] = useState(false)
   const [addedAnimation, setAddedAnimation] = useState(false)
+  const user = useUserStore((s) => s.currentUser)
+  const sessionId = useUserStore((s) => s.sessionId)
+  useEffect(() => {
+    if (explanation) trackEvent({ customer_id: user.id, session_id: sessionId, product_id: product.id,
+      event_type: 'recommendation_impression', event_key: `rec:${sessionId}:${product.id}` }).catch(() => {})
+  }, [product.id, explanation, user.id, sessionId])
+  const recordClick = () => {
+    if (explanation) trackEvent({ customer_id: user.id, session_id: sessionId, product_id: product.id, event_type: 'recommendation_click' }).catch(() => {})
+  }
   const addItem = useCartStore((s) => s.addItem)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
@@ -28,14 +40,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     setTimeout(() => setAddedAnimation(false), 1200)
   }
 
-  const discount = product.original_price && product.original_price > product.price
-    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
-    : 0
+  const discount = discountPercent(product.price, product.original_price)
 
   return (
     <div className="group relative flex flex-col bg-white rounded-xl border border-cream-300 overflow-hidden hover:shadow-xl hover:border-brand/40 transition-all duration-300">
       {/* Image container */}
-      <Link to={`/product/${product.id}`} className="relative aspect-[3/4] w-full overflow-hidden bg-cream-200 block">
+      <Link onClick={recordClick} to={`/product/${product.id}`} className="relative aspect-[3/4] w-full overflow-hidden bg-cream-200 block">
         <img
           src={product.image_url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80'}
           alt={product.name}
@@ -58,25 +68,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Action icons */}
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            setWishlisted(!wishlisted)
-          }}
-          className={`absolute top-2.5 right-2.5 p-2 rounded-full transition-all duration-200 ${
-            wishlisted
-              ? 'bg-red-50 text-red-600 shadow-md'
-              : 'bg-white/80 text-charcoal-600 hover:bg-white hover:text-red-500'
-          }`}
-          title="Wishlist"
-        >
-          <Heart className={`w-4 h-4 ${wishlisted ? 'fill-current' : ''}`} />
-        </button>
+        <div className="absolute top-2.5 right-2.5"><WishlistButton productId={product.id} /></div>
 
         {/* Quick Add Overlay on Hover */}
-        <div className="absolute inset-x-2 bottom-2 hidden group-hover:flex gap-2">
+        <div className="absolute inset-x-2 bottom-2 flex sm:hidden sm:group-hover:flex gap-2">
           <button
+            disabled={!product.active || product.stock_quantity < 1}
             onClick={handleQuickAdd}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium text-white shadow-lg transition-all ${
               addedAnimation ? 'bg-emerald-700' : 'bg-charcoal-900 hover:bg-brand'
@@ -113,7 +110,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           </div>
 
-          <Link to={`/product/${product.id}`} className="block">
+          <Link onClick={recordClick} to={`/product/${product.id}`} className="block">
             <h3 className="text-sm font-medium text-charcoal-900 group-hover:text-brand line-clamp-1 transition-colors">
               {product.name}
             </h3>

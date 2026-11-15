@@ -1,3 +1,5 @@
+import { errorMessage } from '../../services/errors'
+import { RequestError } from '../../components/ui/RequestError'
 import React, { useEffect, useState } from 'react'
 import {
   Boxes,
@@ -63,12 +65,13 @@ export const InventoryPage: React.FC = () => {
       setRestockModalItem(null)
       load()
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Restock update failed')
+      alert(errorMessage(err))
     } finally {
       setSubmittingRestock(false)
     }
   }
 
+  if (!loading && (!data)) return <RequestError />
   if (loading || !data) {
     return (
       <div className="py-20 text-center">
@@ -302,8 +305,8 @@ export const InventoryPage: React.FC = () => {
               </p>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Product</label>
-                <input
+                <label htmlFor="inventory-field-1" className="block font-semibold text-charcoal-700 mb-1">Product</label>
+                <input id="inventory-field-1"
                   type="text"
                   disabled
                   value={restockModalItem.name}
@@ -312,8 +315,8 @@ export const InventoryPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-charcoal-700 mb-1">Replenishment Quantity (Units)</label>
-                <input
+                <label htmlFor="inventory-field-2" className="block font-semibold text-charcoal-700 mb-1">Replenishment Quantity (Units)</label>
+                <input id="inventory-field-2"
                   type="number"
                   min="1"
                   max="1000"

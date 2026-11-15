@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
 import './index.css'
 
+document.addEventListener('error', (event) => {
+  const img = event.target
+  if (img instanceof HTMLImageElement && !img.src.endsWith('/assets/product-placeholder.svg')) img.src = '/assets/product-placeholder.svg'
+}, true)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

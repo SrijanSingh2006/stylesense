@@ -1,10 +1,10 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
 connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
+    connect_args = {"check_same_thread": False, "timeout": 30}
 
 engine = create_engine(
     settings.DATABASE_URL,
@@ -14,6 +14,15 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+def configure_sqlite(engine):
+    if engine.dialect.name == "sqlite":
+        @event.listens_for(engine, "connect")
+        def set_pragmas(connection, _):
+            connection.execute("PRAGMA foreign_keys=ON")
+            connection.execute("PRAGMA busy_timeout=30000")
+
+configure_sqlite(engine)
 
 def get_db():
     db = SessionLocal()

@@ -1,13 +1,20 @@
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict
+from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 # Inventory
 class InventoryMovementCreate(BaseModel):
     product_id: int
-    movement_type: str # PURCHASE, RESTOCK, RETURN, ADJUSTMENT
-    quantity: int
+    movement_type: str = Field(pattern="^(RESTOCK|RETURN|ADJUSTMENT)$") # purchases are recorded only through checkout
+    quantity: int = Field(strict=True)
     reference: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_movement(self):
+        if self.quantity == 0 or (self.movement_type in {"RESTOCK", "RETURN"} and self.quantity < 0):
+            raise ValueError("Restock/return quantities must be positive; adjustments must be nonzero")
+        return self
 
 class InventoryAlertItem(BaseModel):
     product_id: int
@@ -74,8 +81,7 @@ class CatalogueIssueResponse(BaseModel):
     is_resolved: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)
 
 class CatalogueIssueUpdate(BaseModel):
     is_resolved: bool
@@ -92,8 +98,8 @@ class CatalogueQualityResponse(BaseModel):
 class PromotionSimulateRequest(BaseModel):
     product_id: int
     discount_percentage: float = Field(..., ge=0, le=90)
-    price_elasticity: float = Field(-1.8, description="Estimated price elasticity of demand (e.g. -1.5 to -2.5)")
-    estimated_cost_per_unit: Optional[float] = None
+    price_elasticity: float = Field(-1.8, ge=-10, le=0, allow_inf_nan=False, description="Estimated price elasticity of demand (e.g. -1.5 to -2.5)")
+    estimated_cost_per_unit: Optional[float] = Field(None, ge=0, allow_inf_nan=False)
 
 class PromotionSimulateResponse(BaseModel):
     product_id: int
@@ -120,10 +126,10 @@ class RoadmapTaskCreate(BaseModel):
     owner: str = "Storefront PM"
     status: str = "BACKLOG"
     priority: str = "MEDIUM"
-    reach: float = 1000.0
-    impact: float = 2.0
-    confidence: float = 80.0
-    effort: float = 4.0
+    reach: float = Field(1000, ge=0)
+    impact: float = Field(2, ge=0)
+    confidence: float = Field(80, ge=0, le=100)
+    effort: float = Field(4, gt=0)
     due_date: Optional[datetime] = None
 
 class RoadmapTaskUpdate(BaseModel):
@@ -132,10 +138,10 @@ class RoadmapTaskUpdate(BaseModel):
     owner: Optional[str] = None
     status: Optional[str] = None
     priority: Optional[str] = None
-    reach: Optional[float] = None
-    impact: Optional[float] = None
-    confidence: Optional[float] = None
-    effort: Optional[float] = None
+    reach: Optional[float] = Field(None, ge=0)
+    impact: Optional[float] = Field(None, ge=0)
+    confidence: Optional[float] = Field(None, ge=0, le=100)
+    effort: Optional[float] = Field(None, gt=0)
     due_date: Optional[datetime] = None
 
 class RoadmapTaskResponse(BaseModel):
@@ -153,8 +159,7 @@ class RoadmapTaskResponse(BaseModel):
     due_date: Optional[datetime]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)
 
 # Release Readiness
 class ReleaseCreate(BaseModel):
@@ -183,8 +188,7 @@ class ReleaseResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)
 
 # Feedback
 class FeedbackCreate(BaseModel):
@@ -215,5 +219,4 @@ class FeedbackResponse(BaseModel):
     status: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes = True)

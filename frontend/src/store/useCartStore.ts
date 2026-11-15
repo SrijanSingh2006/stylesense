@@ -1,3 +1,5 @@
+import { recordCartEvent } from '../services/api'
+import { useUserStore } from './useUserStore'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CartItem, Product } from '../types'
@@ -17,6 +19,9 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       addItem: (product, size, quantity = 1) => {
+        if (!Number.isInteger(quantity) || quantity < 1 || !product.active || product.stock_quantity < quantity || !product.sizes_available.includes(size)) return
+        const user = useUserStore.getState()
+        recordCartEvent({ customer_id: user.currentUser.id, session_id: user.sessionId, product_id: product.id, action: 'add', quantity, selected_size: size }).catch(() => {})
         set((state) => {
           const existing = state.items.find(
             (i) => i.product.id === product.id && i.selected_size === size
@@ -43,6 +48,7 @@ export const useCartStore = create<CartState>()(
         }))
       },
       updateQuantity: (productId, size, quantity) => {
+        if (!Number.isInteger(quantity)) return
         if (quantity <= 0) {
           get().removeItem(productId, size)
           return

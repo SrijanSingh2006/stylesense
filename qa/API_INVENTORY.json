@@ -1,0 +1,5361 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "StyleSense",
+    "description": "StyleSense: AI-Powered Commerce Intelligence & Personalisation Platform API",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Get Health",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get Products",
+        "operationId": "get_products_api_v1_products_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Brand"
+            }
+          },
+          {
+            "name": "colour",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Colour"
+            }
+          },
+          {
+            "name": "min_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Price"
+            }
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Price"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "rating",
+              "title": "Sort By"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{product_id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get Product",
+        "operationId": "get_product_api_v1_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Post Search",
+        "operationId": "post_search_api_v1_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/visual-search": {
+      "post": {
+        "tags": [
+          "Search"
+        ],
+        "summary": "Post Visual Search",
+        "operationId": "post_visual_search_api_v1_visual_search_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_post_visual_search_api_v1_visual_search_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisualSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/{customer_id}": {
+      "get": {
+        "tags": [
+          "Recommendations"
+        ],
+        "summary": "Get Recommendations",
+        "operationId": "get_recommendations_api_v1_recommendations__customer_id__get",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/recommendations/{customer_id}/complete-look": {
+      "get": {
+        "tags": [
+          "Recommendations"
+        ],
+        "summary": "Get Look Recommendation",
+        "operationId": "get_look_recommendation_api_v1_recommendations__customer_id__complete_look_get",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteLookResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/size-recommendation": {
+      "post": {
+        "tags": [
+          "Size & Fit"
+        ],
+        "summary": "Post Size Recommendation",
+        "operationId": "post_size_recommendation_api_v1_size_recommendation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SizeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cart/events": {
+      "post": {
+        "tags": [
+          "Shopping"
+        ],
+        "summary": "Record Cart Event",
+        "operationId": "record_cart_event_api_v1_cart_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orders": {
+      "post": {
+        "tags": [
+          "Shopping"
+        ],
+        "summary": "Create Order",
+        "operationId": "create_order_api_v1_orders_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Post Event",
+        "operationId": "post_event_api_v1_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/overview": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Overview",
+        "operationId": "get_overview_api_v1_analytics_overview_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 180,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewMetricsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/funnel": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Funnel",
+        "operationId": "get_funnel_api_v1_analytics_funnel_get",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 180,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunnelResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/cohorts": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Cohorts",
+        "operationId": "get_cohorts_api_v1_analytics_cohorts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohortResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/products": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get Products Analytics",
+        "operationId": "get_products_analytics_api_v1_analytics_products_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 365,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductPerformanceItem"
+                  },
+                  "title": "Response Get Products Analytics Api V1 Analytics Products Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analytics/north-star": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get North Star",
+        "operationId": "get_north_star_api_v1_analytics_north_star_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NorthStarResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/segments": {
+      "get": {
+        "tags": [
+          "Customer Segmentation"
+        ],
+        "summary": "Get Segments",
+        "operationId": "get_segments_api_v1_segments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/segments/{segment_name}": {
+      "get": {
+        "tags": [
+          "Customer Segmentation"
+        ],
+        "summary": "Get Segment Detail",
+        "operationId": "get_segment_detail_api_v1_segments__segment_name__get",
+        "parameters": [
+          {
+            "name": "segment_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Segment Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SegmentCustomer"
+                  },
+                  "title": "Response Get Segment Detail Api V1 Segments  Segment Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments": {
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "List Experiments",
+        "operationId": "list_experiments_api_v1_experiments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExperimentResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Experiments Api V1 Experiments Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Create Experiment",
+        "operationId": "create_experiment_api_v1_experiments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments/{experiment_id}": {
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Get Experiment",
+        "operationId": "get_experiment_api_v1_experiments__experiment_id__get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Update Experiment",
+        "operationId": "update_experiment_api_v1_experiments__experiment_id__patch",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExperimentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments/{experiment_id}/assign": {
+      "post": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Assign Variant",
+        "operationId": "assign_variant_api_v1_experiments__experiment_id__assign_post",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Experiment Id"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/experiments/{experiment_id}/results": {
+      "get": {
+        "tags": [
+          "Experiments"
+        ],
+        "summary": "Get Results",
+        "operationId": "get_results_api_v1_experiments__experiment_id__results_get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentResultsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feature-flags": {
+      "get": {
+        "tags": [
+          "Feature Flags"
+        ],
+        "summary": "Get Feature Flags",
+        "operationId": "get_feature_flags_api_v1_feature_flags_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FeatureFlagResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Feature Flags Api V1 Feature Flags Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Feature Flags"
+        ],
+        "summary": "Create Feature Flag",
+        "operationId": "create_feature_flag_api_v1_feature_flags_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeatureFlagCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureFlagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feature-flags/{flag_id}": {
+      "patch": {
+        "tags": [
+          "Feature Flags"
+        ],
+        "summary": "Update Feature Flag",
+        "operationId": "update_feature_flag_api_v1_feature_flags__flag_id__patch",
+        "parameters": [
+          {
+            "name": "flag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Flag Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeatureFlagUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureFlagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feature-flags/eligibility/{customer_id}": {
+      "get": {
+        "tags": [
+          "Feature Flags"
+        ],
+        "summary": "Eligibility",
+        "operationId": "eligibility_api_v1_feature_flags_eligibility__customer_id__get",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get Inventory",
+        "operationId": "get_inventory_api_v1_inventory_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryOverviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/alerts": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get Alerts",
+        "operationId": "get_alerts_api_v1_inventory_alerts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryAlertItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get Alerts Api V1 Inventory Alerts Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/forecast/{product_id}": {
+      "get": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Get Forecast",
+        "operationId": "get_forecast_api_v1_inventory_forecast__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryForecastResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inventory/movements": {
+      "post": {
+        "tags": [
+          "Inventory"
+        ],
+        "summary": "Create Movement",
+        "operationId": "create_movement_api_v1_inventory_movements_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryMovementCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/returns/overview": {
+      "get": {
+        "tags": [
+          "Returns"
+        ],
+        "summary": "Get Overview",
+        "operationId": "get_overview_api_v1_returns_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnOverviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/returns/insights": {
+      "get": {
+        "tags": [
+          "Returns"
+        ],
+        "summary": "Get Insights",
+        "operationId": "get_insights_api_v1_returns_insights_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalogue/quality": {
+      "get": {
+        "tags": [
+          "Catalogue"
+        ],
+        "summary": "Get Quality",
+        "operationId": "get_quality_api_v1_catalogue_quality_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogueQualityResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalogue/issues": {
+      "get": {
+        "tags": [
+          "Catalogue"
+        ],
+        "summary": "Get Issues",
+        "operationId": "get_issues_api_v1_catalogue_issues_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogueIssueResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Issues Api V1 Catalogue Issues Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalogue/issues/{issue_id}": {
+      "patch": {
+        "tags": [
+          "Catalogue"
+        ],
+        "summary": "Patch Issue",
+        "operationId": "patch_issue_api_v1_catalogue_issues__issue_id__patch",
+        "parameters": [
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Issue Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogueIssueUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogueIssueResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/promotions/simulate": {
+      "post": {
+        "tags": [
+          "Pricing & Promotions"
+        ],
+        "summary": "Post Simulation",
+        "operationId": "post_simulation_api_v1_promotions_simulate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionSimulateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromotionSimulateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roadmap/tasks": {
+      "get": {
+        "tags": [
+          "Roadmap"
+        ],
+        "summary": "List Tasks",
+        "operationId": "list_tasks_api_v1_roadmap_tasks_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoadmapTaskResponse"
+                  },
+                  "title": "Response List Tasks Api V1 Roadmap Tasks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Roadmap"
+        ],
+        "summary": "Add Task",
+        "operationId": "add_task_api_v1_roadmap_tasks_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoadmapTaskCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoadmapTaskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roadmap/tasks/{task_id}": {
+      "patch": {
+        "tags": [
+          "Roadmap"
+        ],
+        "summary": "Modify Task",
+        "operationId": "modify_task_api_v1_roadmap_tasks__task_id__patch",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoadmapTaskUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoadmapTaskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Roadmap"
+        ],
+        "summary": "Remove Task",
+        "operationId": "remove_task_api_v1_roadmap_tasks__task_id__delete",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Task Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/releases": {
+      "get": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "List Releases",
+        "operationId": "list_releases_api_v1_releases_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReleaseResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Releases Api V1 Releases Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Add Release",
+        "operationId": "add_release_api_v1_releases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/releases/{release_id}": {
+      "patch": {
+        "tags": [
+          "Releases"
+        ],
+        "summary": "Modify Release",
+        "operationId": "modify_release_api_v1_releases__release_id__patch",
+        "parameters": [
+          {
+            "name": "release_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Release Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feedback": {
+      "get": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "List Feedback",
+        "operationId": "list_feedback_api_v1_feedback_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FeedbackResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Feedback Api V1 Feedback Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Add Feedback",
+        "operationId": "add_feedback_api_v1_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feedback/{feedback_id}": {
+      "patch": {
+        "tags": [
+          "Feedback"
+        ],
+        "summary": "Modify Feedback",
+        "operationId": "modify_feedback_api_v1_feedback__feedback_id__patch",
+        "parameters": [
+          {
+            "name": "feedback_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Feedback Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wishlist/{customer_id}": {
+      "get": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "List Wishlist",
+        "operationId": "list_wishlist_api_v1_wishlist__customer_id__get",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponse"
+                  },
+                  "title": "Response List Wishlist Api V1 Wishlist  Customer Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wishlist/{customer_id}/{product_id}": {
+      "put": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Add Wishlist",
+        "operationId": "add_wishlist_api_v1_wishlist__customer_id___product_id__put",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Wishlist"
+        ],
+        "summary": "Remove Wishlist",
+        "operationId": "remove_wishlist_api_v1_wishlist__customer_id___product_id__delete",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_post_visual_search_api_v1_visual_search_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_post_visual_search_api_v1_visual_search_post"
+      },
+      "CartEventRequest": {
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "add",
+              "remove",
+              "update_qty"
+            ],
+            "title": "Action"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          },
+          "selected_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Size",
+            "default": "M"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "product_id",
+          "action"
+        ],
+        "title": "CartEventRequest"
+      },
+      "CatalogueIssueResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "issue_type": {
+            "type": "string",
+            "title": "Issue Type"
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "suggested_action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suggested Action"
+          },
+          "is_resolved": {
+            "type": "boolean",
+            "title": "Is Resolved"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "product_id",
+          "product_name",
+          "issue_type",
+          "severity",
+          "description",
+          "suggested_action",
+          "is_resolved",
+          "created_at"
+        ],
+        "title": "CatalogueIssueResponse"
+      },
+      "CatalogueIssueUpdate": {
+        "properties": {
+          "is_resolved": {
+            "type": "boolean",
+            "title": "Is Resolved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_resolved"
+        ],
+        "title": "CatalogueIssueUpdate"
+      },
+      "CatalogueQualityResponse": {
+        "properties": {
+          "total_products_checked": {
+            "type": "integer",
+            "title": "Total Products Checked"
+          },
+          "catalogue_health_score": {
+            "type": "number",
+            "title": "Catalogue Health Score"
+          },
+          "critical_issues_count": {
+            "type": "integer",
+            "title": "Critical Issues Count"
+          },
+          "warning_issues_count": {
+            "type": "integer",
+            "title": "Warning Issues Count"
+          },
+          "issues_by_type": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Issues By Type"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogueIssueResponse"
+            },
+            "type": "array",
+            "title": "Issues"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_products_checked",
+          "catalogue_health_score",
+          "critical_issues_count",
+          "warning_issues_count",
+          "issues_by_type",
+          "issues"
+        ],
+        "title": "CatalogueQualityResponse"
+      },
+      "CategoryReturnItem": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "total_orders": {
+            "type": "integer",
+            "title": "Total Orders"
+          },
+          "returned_orders": {
+            "type": "integer",
+            "title": "Returned Orders"
+          },
+          "return_rate": {
+            "type": "number",
+            "title": "Return Rate"
+          },
+          "primary_reason": {
+            "type": "string",
+            "title": "Primary Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "total_orders",
+          "returned_orders",
+          "return_rate",
+          "primary_reason"
+        ],
+        "title": "CategoryReturnItem"
+      },
+      "CohortResponse": {
+        "properties": {
+          "cohorts": {
+            "items": {
+              "$ref": "#/components/schemas/CohortRow"
+            },
+            "type": "array",
+            "title": "Cohorts"
+          },
+          "period": {
+            "type": "string",
+            "title": "Period",
+            "default": "Last 4 Weeks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cohorts"
+        ],
+        "title": "CohortResponse"
+      },
+      "CohortRetentionWeek": {
+        "properties": {
+          "week_index": {
+            "type": "integer",
+            "title": "Week Index"
+          },
+          "retention_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retention Rate"
+          },
+          "observed": {
+            "type": "boolean",
+            "title": "Observed",
+            "default": true
+          },
+          "active_customers": {
+            "type": "integer",
+            "title": "Active Customers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "week_index",
+          "retention_rate",
+          "active_customers"
+        ],
+        "title": "CohortRetentionWeek"
+      },
+      "CohortRow": {
+        "properties": {
+          "cohort_week": {
+            "type": "string",
+            "title": "Cohort Week"
+          },
+          "cohort_size": {
+            "type": "integer",
+            "title": "Cohort Size"
+          },
+          "weeks": {
+            "items": {
+              "$ref": "#/components/schemas/CohortRetentionWeek"
+            },
+            "type": "array",
+            "title": "Weeks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cohort_week",
+          "cohort_size",
+          "weeks"
+        ],
+        "title": "CohortRow"
+      },
+      "CompleteLookResponse": {
+        "properties": {
+          "primary_product": {
+            "$ref": "#/components/schemas/ProductResponse"
+          },
+          "outfit_items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponse"
+            },
+            "type": "array",
+            "title": "Outfit Items"
+          },
+          "total_outfit_price": {
+            "type": "number",
+            "title": "Total Outfit Price"
+          },
+          "styling_notes": {
+            "type": "string",
+            "title": "Styling Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "primary_product",
+          "outfit_items",
+          "total_outfit_price",
+          "styling_notes"
+        ],
+        "title": "CompleteLookResponse"
+      },
+      "EventCreate": {
+        "properties": {
+          "event_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Key"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "session_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Session Id"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "event_type": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Event Type"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          },
+          "experiment_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experiment Id"
+          },
+          "variant": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variant"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "event_type"
+        ],
+        "title": "EventCreate"
+      },
+      "EventResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "session_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Session Id"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "event_type": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Event Type"
+          },
+          "event_metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Event Metadata"
+          },
+          "experiment_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Experiment Id"
+          },
+          "variant": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variant"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer_id",
+          "session_id",
+          "product_id",
+          "event_type",
+          "experiment_id",
+          "variant",
+          "occurred_at"
+        ],
+        "title": "EventResponse"
+      },
+      "ExperimentCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "hypothesis": {
+            "type": "string",
+            "title": "Hypothesis"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "primary_metric": {
+            "type": "string",
+            "title": "Primary Metric",
+            "default": "conversion_rate"
+          },
+          "traffic_percentage": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Traffic Percentage",
+            "default": 50.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "hypothesis"
+        ],
+        "title": "ExperimentCreate"
+      },
+      "ExperimentResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "hypothesis": {
+            "type": "string",
+            "title": "Hypothesis"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "primary_metric": {
+            "type": "string",
+            "title": "Primary Metric"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "traffic_percentage": {
+            "type": "number",
+            "title": "Traffic Percentage"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "hypothesis",
+          "description",
+          "primary_metric",
+          "status",
+          "traffic_percentage",
+          "start_date",
+          "end_date",
+          "created_at"
+        ],
+        "title": "ExperimentResponse"
+      },
+      "ExperimentResultsResponse": {
+        "properties": {
+          "attribution": {
+            "type": "string",
+            "title": "Attribution",
+            "default": ""
+          },
+          "relative_lift_available": {
+            "type": "boolean",
+            "title": "Relative Lift Available",
+            "default": true
+          },
+          "experiment_id": {
+            "type": "integer",
+            "title": "Experiment Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "primary_metric": {
+            "type": "string",
+            "title": "Primary Metric"
+          },
+          "control": {
+            "$ref": "#/components/schemas/VariantMetrics"
+          },
+          "treatment": {
+            "$ref": "#/components/schemas/VariantMetrics"
+          },
+          "absolute_difference": {
+            "type": "number",
+            "title": "Absolute Difference"
+          },
+          "relative_lift_pct": {
+            "type": "number",
+            "title": "Relative Lift Pct"
+          },
+          "p_value": {
+            "type": "number",
+            "title": "P Value"
+          },
+          "z_score": {
+            "type": "number",
+            "title": "Z Score"
+          },
+          "confidence_interval_95": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Confidence Interval 95"
+          },
+          "is_statistically_significant": {
+            "type": "boolean",
+            "title": "Is Statistically Significant"
+          },
+          "statistical_test": {
+            "type": "string",
+            "title": "Statistical Test",
+            "default": "Two-Proportion Z-Test (Pooled Variance)"
+          },
+          "sample_size_adequate": {
+            "type": "boolean",
+            "title": "Sample Size Adequate"
+          },
+          "decision_recommendation": {
+            "type": "string",
+            "title": "Decision Recommendation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "name",
+          "status",
+          "primary_metric",
+          "control",
+          "treatment",
+          "absolute_difference",
+          "relative_lift_pct",
+          "p_value",
+          "z_score",
+          "confidence_interval_95",
+          "is_statistically_significant",
+          "sample_size_adequate",
+          "decision_recommendation"
+        ],
+        "title": "ExperimentResultsResponse"
+      },
+      "ExperimentUpdate": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(DRAFT|RUNNING|CONCLUDED|PAUSED)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "traffic_percentage": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Traffic Percentage"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "title": "ExperimentUpdate"
+      },
+      "ExtractedFilters": {
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "min_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Price"
+          },
+          "max_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Price"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "occasion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasion"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "ExtractedFilters"
+      },
+      "FeatureFlagCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false
+          },
+          "rollout_percentage": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Rollout Percentage",
+            "default": 100.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "FeatureFlagCreate"
+      },
+      "FeatureFlagResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false
+          },
+          "rollout_percentage": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Rollout Percentage",
+            "default": 100.0
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "id",
+          "updated_at"
+        ],
+        "title": "FeatureFlagResponse"
+      },
+      "FeatureFlagUpdate": {
+        "properties": {
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "rollout_percentage": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rollout Percentage"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "title": "FeatureFlagUpdate"
+      },
+      "FeedbackCreate": {
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "feedback_type": {
+            "type": "string",
+            "title": "Feedback Type",
+            "default": "FIT_ISSUE"
+          },
+          "rating": {
+            "type": "number",
+            "title": "Rating",
+            "default": 4.0
+          },
+          "comment": {
+            "type": "string",
+            "title": "Comment"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "Storefront Review"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "default": "MEDIUM"
+          }
+        },
+        "type": "object",
+        "required": [
+          "comment"
+        ],
+        "title": "FeedbackCreate"
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "feedback_type": {
+            "type": "string",
+            "title": "Feedback Type"
+          },
+          "rating": {
+            "type": "number",
+            "title": "Rating"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
+          "sentiment": {
+            "type": "string",
+            "title": "Sentiment"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer_id",
+          "product_id",
+          "feedback_type",
+          "rating",
+          "comment",
+          "source",
+          "owner",
+          "priority",
+          "sentiment",
+          "status",
+          "created_at"
+        ],
+        "title": "FeedbackResponse"
+      },
+      "FeedbackUpdate": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          }
+        },
+        "type": "object",
+        "title": "FeedbackUpdate"
+      },
+      "FunnelResponse": {
+        "properties": {
+          "total_sessions": {
+            "type": "integer",
+            "title": "Total Sessions"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/FunnelStep"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "biggest_dropoff_stage": {
+            "type": "string",
+            "title": "Biggest Dropoff Stage"
+          },
+          "methodology": {
+            "type": "string",
+            "title": "Methodology",
+            "default": "Session-based funnel aggregation from atomic event logs."
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_sessions",
+          "steps",
+          "biggest_dropoff_stage"
+        ],
+        "title": "FunnelResponse"
+      },
+      "FunnelStep": {
+        "properties": {
+          "step_name": {
+            "type": "string",
+            "title": "Step Name"
+          },
+          "stage_key": {
+            "type": "string",
+            "title": "Stage Key"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "conversion_from_prev": {
+            "type": "number",
+            "title": "Conversion From Prev"
+          },
+          "drop_off_count": {
+            "type": "integer",
+            "title": "Drop Off Count"
+          },
+          "drop_off_rate": {
+            "type": "number",
+            "title": "Drop Off Rate"
+          },
+          "overall_conversion": {
+            "type": "number",
+            "title": "Overall Conversion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "step_name",
+          "stage_key",
+          "count",
+          "conversion_from_prev",
+          "drop_off_count",
+          "drop_off_rate",
+          "overall_conversion"
+        ],
+        "title": "FunnelStep"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InventoryAlertItem": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "current_stock": {
+            "type": "integer",
+            "title": "Current Stock"
+          },
+          "reorder_point": {
+            "type": "integer",
+            "title": "Reorder Point"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "stock_coverage_days": {
+            "type": "number",
+            "title": "Stock Coverage Days"
+          },
+          "recommended_reorder_qty": {
+            "type": "integer",
+            "title": "Recommended Reorder Qty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "category",
+          "current_stock",
+          "reorder_point",
+          "status",
+          "stock_coverage_days",
+          "recommended_reorder_qty"
+        ],
+        "title": "InventoryAlertItem"
+      },
+      "InventoryForecastResponse": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "current_stock": {
+            "type": "integer",
+            "title": "Current Stock"
+          },
+          "daily_run_rate_units": {
+            "type": "number",
+            "title": "Daily Run Rate Units"
+          },
+          "days_until_stockout": {
+            "type": "number",
+            "title": "Days Until Stockout"
+          },
+          "reorder_threshold": {
+            "type": "integer",
+            "title": "Reorder Threshold"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "recommended_po_quantity": {
+            "type": "integer",
+            "title": "Recommended Po Quantity"
+          },
+          "historical_weekly_sales": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Historical Weekly Sales"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "product_name",
+          "current_stock",
+          "daily_run_rate_units",
+          "days_until_stockout",
+          "reorder_threshold",
+          "status",
+          "recommended_po_quantity",
+          "historical_weekly_sales"
+        ],
+        "title": "InventoryForecastResponse"
+      },
+      "InventoryMovementCreate": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "movement_type": {
+            "type": "string",
+            "pattern": "^(RESTOCK|RETURN|ADJUSTMENT)$",
+            "title": "Movement Type"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "movement_type",
+          "quantity"
+        ],
+        "title": "InventoryMovementCreate"
+      },
+      "InventoryOverviewResponse": {
+        "properties": {
+          "total_skus": {
+            "type": "integer",
+            "title": "Total Skus"
+          },
+          "total_inventory_units": {
+            "type": "integer",
+            "title": "Total Inventory Units"
+          },
+          "total_inventory_valuation": {
+            "type": "number",
+            "title": "Total Inventory Valuation"
+          },
+          "out_of_stock_count": {
+            "type": "integer",
+            "title": "Out Of Stock Count"
+          },
+          "low_stock_count": {
+            "type": "integer",
+            "title": "Low Stock Count"
+          },
+          "inventory_turnover_ratio": {
+            "type": "number",
+            "title": "Inventory Turnover Ratio"
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryAlertItem"
+            },
+            "type": "array",
+            "title": "Alerts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_skus",
+          "total_inventory_units",
+          "total_inventory_valuation",
+          "out_of_stock_count",
+          "low_stock_count",
+          "inventory_turnover_ratio",
+          "alerts"
+        ],
+        "title": "InventoryOverviewResponse"
+      },
+      "NorthStarResponse": {
+        "properties": {
+          "north_star_name": {
+            "type": "string",
+            "title": "North Star Name",
+            "default": "Completed Purchase Sessions"
+          },
+          "north_star_value": {
+            "type": "integer",
+            "title": "North Star Value"
+          },
+          "supporting_metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Supporting Metrics"
+          },
+          "metric_tree_description": {
+            "type": "string",
+            "title": "Metric Tree Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "north_star_value",
+          "supporting_metrics",
+          "metric_tree_description"
+        ],
+        "title": "NorthStarResponse"
+      },
+      "OrderCreateRequest": {
+        "properties": {
+          "customer_id": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Customer Id"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "Idempotency Key"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderItemCreate"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_id",
+          "idempotency_key",
+          "items"
+        ],
+        "title": "OrderCreateRequest"
+      },
+      "OrderItemCreate": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Product Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          },
+          "selected_size": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Selected Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "product_id",
+          "quantity",
+          "selected_size"
+        ],
+        "title": "OrderItemCreate"
+      },
+      "OrderItemResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "unit_price": {
+            "type": "number",
+            "title": "Unit Price"
+          },
+          "selected_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "product_id",
+          "quantity",
+          "unit_price",
+          "selected_size"
+        ],
+        "title": "OrderItemResponse"
+      },
+      "OrderResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "customer_id": {
+            "type": "integer",
+            "title": "Customer Id"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          },
+          "total_amount": {
+            "type": "number",
+            "title": "Total Amount"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderItemResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "customer_id",
+          "session_id",
+          "total_amount",
+          "status",
+          "created_at",
+          "items"
+        ],
+        "title": "OrderResponse"
+      },
+      "OverviewMetricsResponse": {
+        "properties": {
+          "total_revenue": {
+            "type": "number",
+            "title": "Total Revenue"
+          },
+          "average_order_value": {
+            "type": "number",
+            "title": "Average Order Value"
+          },
+          "total_sessions": {
+            "type": "integer",
+            "title": "Total Sessions"
+          },
+          "unique_visitors": {
+            "type": "integer",
+            "title": "Unique Visitors"
+          },
+          "total_orders": {
+            "type": "integer",
+            "title": "Total Orders"
+          },
+          "conversion_rate": {
+            "type": "number",
+            "title": "Conversion Rate"
+          },
+          "cart_abandonment_rate": {
+            "type": "number",
+            "title": "Cart Abandonment Rate"
+          },
+          "return_rate": {
+            "type": "number",
+            "title": "Return Rate"
+          },
+          "repeat_customer_rate": {
+            "type": "number",
+            "title": "Repeat Customer Rate"
+          },
+          "total_products_active": {
+            "type": "integer",
+            "title": "Total Products Active"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_revenue",
+          "average_order_value",
+          "total_sessions",
+          "unique_visitors",
+          "total_orders",
+          "conversion_rate",
+          "cart_abandonment_rate",
+          "return_rate",
+          "repeat_customer_rate",
+          "total_products_active"
+        ],
+        "title": "OverviewMetricsResponse"
+      },
+      "ProductListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit",
+          "pages"
+        ],
+        "title": "ProductListResponse"
+      },
+      "ProductPerformanceItem": {
+        "properties": {
+          "ctr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ctr"
+          },
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "views": {
+            "type": "integer",
+            "title": "Views"
+          },
+          "adds_to_cart": {
+            "type": "integer",
+            "title": "Adds To Cart"
+          },
+          "purchases": {
+            "type": "integer",
+            "title": "Purchases"
+          },
+          "conversion_rate": {
+            "type": "number",
+            "title": "Conversion Rate"
+          },
+          "revenue": {
+            "type": "number",
+            "title": "Revenue"
+          },
+          "return_count": {
+            "type": "integer",
+            "title": "Return Count"
+          },
+          "return_rate": {
+            "type": "number",
+            "title": "Return Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "name",
+          "category",
+          "views",
+          "adds_to_cart",
+          "purchases",
+          "conversion_rate",
+          "revenue",
+          "return_count",
+          "return_rate"
+        ],
+        "title": "ProductPerformanceItem"
+      },
+      "ProductResponse": {
+        "properties": {
+          "sku": {
+            "type": "string",
+            "title": "Sku"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "brand": {
+            "type": "string",
+            "title": "Brand"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "subcategory": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subcategory"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "colour": {
+            "type": "string",
+            "title": "Colour"
+          },
+          "dominant_colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dominant Colour"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "original_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Price"
+          },
+          "sizes_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sizes Available",
+            "default": []
+          },
+          "size_chart": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Size Chart",
+            "default": {}
+          },
+          "fit_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fit Type",
+            "default": "Regular"
+          },
+          "material": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material",
+            "default": "Cotton"
+          },
+          "occasion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occasion",
+            "default": "Casual"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "default": []
+          },
+          "rating": {
+            "type": "number",
+            "title": "Rating",
+            "default": 4.2
+          },
+          "review_count": {
+            "type": "integer",
+            "title": "Review Count",
+            "default": 0
+          },
+          "stock_quantity": {
+            "type": "integer",
+            "title": "Stock Quantity",
+            "default": 50
+          },
+          "reorder_point": {
+            "type": "integer",
+            "title": "Reorder Point",
+            "default": 15
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": true
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku",
+          "name",
+          "brand",
+          "category",
+          "colour",
+          "price",
+          "id",
+          "created_at"
+        ],
+        "title": "ProductResponse"
+      },
+      "PromotionSimulateRequest": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "discount_percentage": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Discount Percentage"
+          },
+          "price_elasticity": {
+            "type": "number",
+            "maximum": 0.0,
+            "minimum": -10.0,
+            "title": "Price Elasticity",
+            "description": "Estimated price elasticity of demand (e.g. -1.5 to -2.5)",
+            "default": -1.8
+          },
+          "estimated_cost_per_unit": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cost Per Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "discount_percentage"
+        ],
+        "title": "PromotionSimulateRequest"
+      },
+      "PromotionSimulateResponse": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "baseline_price": {
+            "type": "number",
+            "title": "Baseline Price"
+          },
+          "baseline_units_per_month": {
+            "type": "integer",
+            "title": "Baseline Units Per Month"
+          },
+          "baseline_revenue": {
+            "type": "number",
+            "title": "Baseline Revenue"
+          },
+          "baseline_gross_margin_pct": {
+            "type": "number",
+            "title": "Baseline Gross Margin Pct"
+          },
+          "discount_percentage": {
+            "type": "number",
+            "title": "Discount Percentage"
+          },
+          "scenario_selling_price": {
+            "type": "number",
+            "title": "Scenario Selling Price"
+          },
+          "scenario_estimated_units": {
+            "type": "integer",
+            "title": "Scenario Estimated Units"
+          },
+          "scenario_projected_revenue": {
+            "type": "number",
+            "title": "Scenario Projected Revenue"
+          },
+          "scenario_projected_gross_profit": {
+            "type": "number",
+            "title": "Scenario Projected Gross Profit"
+          },
+          "scenario_gross_margin_pct": {
+            "type": "number",
+            "title": "Scenario Gross Margin Pct"
+          },
+          "revenue_delta_pct": {
+            "type": "number",
+            "title": "Revenue Delta Pct"
+          },
+          "profit_delta_pct": {
+            "type": "number",
+            "title": "Profit Delta Pct"
+          },
+          "elasticity_applied": {
+            "type": "number",
+            "title": "Elasticity Applied"
+          },
+          "assumptions_notice": {
+            "type": "string",
+            "title": "Assumptions Notice",
+            "default": "Estimated demand elasticity simulation. Results reflect modeled consumer sensitivity, not guaranteed sales."
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "product_name",
+          "baseline_price",
+          "baseline_units_per_month",
+          "baseline_revenue",
+          "baseline_gross_margin_pct",
+          "discount_percentage",
+          "scenario_selling_price",
+          "scenario_estimated_units",
+          "scenario_projected_revenue",
+          "scenario_projected_gross_profit",
+          "scenario_gross_margin_pct",
+          "revenue_delta_pct",
+          "profit_delta_pct",
+          "elasticity_applied"
+        ],
+        "title": "PromotionSimulateResponse"
+      },
+      "RecommendationItem": {
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/ProductResponse"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product",
+          "score",
+          "explanation"
+        ],
+        "title": "RecommendationItem"
+      },
+      "RecommendationResponse": {
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "strategy": {
+            "type": "string",
+            "title": "Strategy"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RecommendationItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_id",
+          "strategy",
+          "items"
+        ],
+        "title": "RecommendationResponse"
+      },
+      "ReleaseCreate": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "target_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Date"
+          },
+          "release_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Notes"
+          },
+          "checklist": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Checklist"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "name"
+        ],
+        "title": "ReleaseCreate"
+      },
+      "ReleaseResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "target_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Date"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "readiness_percentage": {
+            "type": "integer",
+            "title": "Readiness Percentage"
+          },
+          "checklist": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Checklist"
+          },
+          "release_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Notes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "name",
+          "target_date",
+          "status",
+          "readiness_percentage",
+          "checklist",
+          "release_notes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ReleaseResponse"
+      },
+      "ReleaseUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "target_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Date"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "checklist": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "boolean"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checklist"
+          },
+          "release_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Notes"
+          }
+        },
+        "type": "object",
+        "title": "ReleaseUpdate"
+      },
+      "ReturnOverviewResponse": {
+        "properties": {
+          "total_orders": {
+            "type": "integer",
+            "title": "Total Orders"
+          },
+          "total_returns": {
+            "type": "integer",
+            "title": "Total Returns"
+          },
+          "overall_return_rate": {
+            "type": "number",
+            "title": "Overall Return Rate"
+          },
+          "size_related_returns_pct": {
+            "type": "number",
+            "title": "Size Related Returns Pct"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ReturnReasonBreakdown"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "category_breakdown": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryReturnItem"
+            },
+            "type": "array",
+            "title": "Category Breakdown"
+          },
+          "top_problematic_products": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Top Problematic Products"
+          },
+          "recommendations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Recommendations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_orders",
+          "total_returns",
+          "overall_return_rate",
+          "size_related_returns_pct",
+          "reasons",
+          "category_breakdown",
+          "top_problematic_products",
+          "recommendations"
+        ],
+        "title": "ReturnOverviewResponse"
+      },
+      "ReturnReasonBreakdown": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "percentage": {
+            "type": "number",
+            "title": "Percentage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "count",
+          "percentage"
+        ],
+        "title": "ReturnReasonBreakdown"
+      },
+      "RoadmapTaskCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner",
+            "default": "Storefront PM"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "BACKLOG"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority",
+            "default": "MEDIUM"
+          },
+          "reach": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Reach",
+            "default": 1000
+          },
+          "impact": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Impact",
+            "default": 2
+          },
+          "confidence": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "default": 80
+          },
+          "effort": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Effort",
+            "default": 4
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "RoadmapTaskCreate"
+      },
+      "RoadmapTaskResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Owner"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "priority": {
+            "type": "string",
+            "title": "Priority"
+          },
+          "reach": {
+            "type": "number",
+            "title": "Reach"
+          },
+          "impact": {
+            "type": "number",
+            "title": "Impact"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "effort": {
+            "type": "number",
+            "title": "Effort"
+          },
+          "rice_score": {
+            "type": "number",
+            "title": "Rice Score"
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "owner",
+          "status",
+          "priority",
+          "reach",
+          "impact",
+          "confidence",
+          "effort",
+          "rice_score",
+          "due_date",
+          "created_at"
+        ],
+        "title": "RoadmapTaskResponse"
+      },
+      "RoadmapTaskUpdate": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
+          "reach": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reach"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          }
+        },
+        "type": "object",
+        "title": "RoadmapTaskUpdate"
+      },
+      "SearchRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "default": ""
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "min_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Price"
+          },
+          "max_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Price"
+          },
+          "colour": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Colour"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "sort_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort By",
+            "default": "relevance"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page",
+            "default": 1
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "title": "SearchRequest"
+      },
+      "SearchResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "parsed_filters": {
+            "$ref": "#/components/schemas/ExtractedFilters"
+          },
+          "parser_type": {
+            "type": "string",
+            "title": "Parser Type",
+            "default": "deterministic_rule_tfidf"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit",
+          "pages",
+          "query",
+          "parsed_filters"
+        ],
+        "title": "SearchResponse"
+      },
+      "SegmentCustomer": {
+        "properties": {
+          "customer_id": {
+            "type": "integer",
+            "title": "Customer Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "segment": {
+            "type": "string",
+            "title": "Segment"
+          },
+          "recency_days": {
+            "type": "integer",
+            "title": "Recency Days"
+          },
+          "frequency_orders": {
+            "type": "integer",
+            "title": "Frequency Orders"
+          },
+          "monetary_spend": {
+            "type": "number",
+            "title": "Monetary Spend"
+          },
+          "actionable_strategy": {
+            "type": "string",
+            "title": "Actionable Strategy"
+          }
+        },
+        "type": "object",
+        "required": [
+          "customer_id",
+          "name",
+          "segment",
+          "recency_days",
+          "frequency_orders",
+          "monetary_spend",
+          "actionable_strategy"
+        ],
+        "title": "SegmentCustomer"
+      },
+      "SegmentSummary": {
+        "properties": {
+          "segment_name": {
+            "type": "string",
+            "title": "Segment Name"
+          },
+          "customer_count": {
+            "type": "integer",
+            "title": "Customer Count"
+          },
+          "percentage": {
+            "type": "number",
+            "title": "Percentage"
+          },
+          "average_spend": {
+            "type": "number",
+            "title": "Average Spend"
+          },
+          "strategy": {
+            "type": "string",
+            "title": "Strategy"
+          }
+        },
+        "type": "object",
+        "required": [
+          "segment_name",
+          "customer_count",
+          "percentage",
+          "average_spend",
+          "strategy"
+        ],
+        "title": "SegmentSummary"
+      },
+      "SegmentationResponse": {
+        "properties": {
+          "summary": {
+            "items": {
+              "$ref": "#/components/schemas/SegmentSummary"
+            },
+            "type": "array",
+            "title": "Summary"
+          },
+          "customers": {
+            "items": {
+              "$ref": "#/components/schemas/SegmentCustomer"
+            },
+            "type": "array",
+            "title": "Customers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "summary",
+          "customers"
+        ],
+        "title": "SegmentationResponse"
+      },
+      "SizeRequest": {
+        "properties": {
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "default": "Shirts"
+          },
+          "height_cm": {
+            "type": "number",
+            "maximum": 240.0,
+            "minimum": 120.0,
+            "title": "Height Cm"
+          },
+          "chest_cm": {
+            "type": "number",
+            "maximum": 160.0,
+            "minimum": 60.0,
+            "title": "Chest Cm"
+          },
+          "waist_cm": {
+            "type": "number",
+            "maximum": 160.0,
+            "minimum": 50.0,
+            "title": "Waist Cm"
+          },
+          "hips_cm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hips Cm"
+          },
+          "preferred_fit": {
+            "type": "string",
+            "title": "Preferred Fit",
+            "default": "Regular"
+          }
+        },
+        "type": "object",
+        "required": [
+          "height_cm",
+          "chest_cm",
+          "waist_cm"
+        ],
+        "title": "SizeRequest"
+      },
+      "SizeResponse": {
+        "properties": {
+          "recommended_size": {
+            "type": "string",
+            "title": "Recommended Size"
+          },
+          "fit_category": {
+            "type": "string",
+            "title": "Fit Category"
+          },
+          "confidence_score": {
+            "type": "number",
+            "title": "Confidence Score"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "size_chart_matched": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Size Chart Matched"
+          },
+          "alternative_sizes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Alternative Sizes"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "default": "Heuristic transparent size recommendation based on brand-grade sizing metrics. Does not guarantee physical bespoke fit."
+          }
+        },
+        "type": "object",
+        "required": [
+          "recommended_size",
+          "fit_category",
+          "confidence_score",
+          "explanation",
+          "size_chart_matched",
+          "alternative_sizes"
+        ],
+        "title": "SizeResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VariantMetrics": {
+        "properties": {
+          "assigned_users": {
+            "type": "integer",
+            "title": "Assigned Users",
+            "default": 0
+          },
+          "exposed_users": {
+            "type": "integer",
+            "title": "Exposed Users",
+            "default": 0
+          },
+          "variant": {
+            "type": "string",
+            "title": "Variant"
+          },
+          "sample_size": {
+            "type": "integer",
+            "title": "Sample Size"
+          },
+          "conversions": {
+            "type": "integer",
+            "title": "Conversions"
+          },
+          "conversion_rate": {
+            "type": "number",
+            "title": "Conversion Rate"
+          },
+          "average_order_value": {
+            "type": "number",
+            "title": "Average Order Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "variant",
+          "sample_size",
+          "conversions",
+          "conversion_rate",
+          "average_order_value"
+        ],
+        "title": "VariantMetrics"
+      },
+      "VisualSearchResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "extracted_colour": {
+            "type": "string",
+            "title": "Extracted Colour"
+          },
+          "extracted_histogram": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Extracted Histogram"
+          },
+          "algorithm": {
+            "type": "string",
+            "title": "Algorithm",
+            "default": "pillow_color_histogram_cosine"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": "Initial prototype matches visual color palette and attributes. Plug-and-play modular design supports future CLIP embedding models."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "extracted_colour",
+          "extracted_histogram"
+        ],
+        "title": "VisualSearchResponse"
+      }
+    }
+  }
+}

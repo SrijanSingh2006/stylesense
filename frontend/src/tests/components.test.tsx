@@ -1,3 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { api } from '../services/api'
+import { riceScore, discountPercent } from '../utils/commerce'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
@@ -29,13 +32,14 @@ const mockProduct: Product = {
 describe('StyleSense Frontend Component Tests', () => {
   beforeEach(() => {
     useCartStore.getState().clearCart()
+    api.defaults.adapter = async (config) => ({ data: [], status: 200, statusText: "OK", headers: {}, config })
   })
 
   it('renders ProductCard with brand, name, rating, and calculated discount', () => {
     render(
-      <BrowserRouter>
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><BrowserRouter>
         <ProductCard product={mockProduct} explanation="Matches your preferred palette" />
-      </BrowserRouter>
+      </BrowserRouter></QueryClientProvider>
     )
 
     expect(screen.getByText('UrbanKnit')).toBeDefined()
@@ -84,46 +88,15 @@ describe('StyleSense Frontend Component Tests', () => {
     expect(newUser.display_name).toBe('Ananya Sharma')
   })
 
-  it('verifies RICE score calculation formula', () => {
-    // Formula: RICE = (Reach * Impact * Confidence%) / Effort
-    const reach = 10000
-    const impact = 3.0
-    const confidence = 80 // 80% = 0.8
-    const effort = 4.0
-
-    const rice = (reach * impact * (confidence / 100)) / effort
-    expect(rice).toBe(6000)
+  it('uses the same RICE function as the roadmap and validates inputs', () => {
+    expect(riceScore(10000, 3, 80, 4)).toBe(6000)
+    expect(riceScore(100, 2, 0, 1)).toBe(0)
+    expect(() => riceScore(100, 2, 80, 0)).toThrow()
+    expect(() => riceScore(100, 2, 101, 1)).toThrow()
   })
-
-  it('verifies Price Elasticity of Demand formula calculation', () => {
-    // Elasticity: % change in Q = Elasticity * % change in P
-    const basePrice = 2000
-    const discountPct = 20 // Price down 20%
-    const elasticity = -1.8
-    const baseUnits = 100
-
-    const pctDemandChange = -elasticity * (discountPct / 100)
-    const newUnits = Math.round(baseUnits * (1 + pctDemandChange))
-    expect(pctDemandChange).toBeCloseTo(0.36) // 36% demand increase
-    expect(newUnits).toBe(136)
-
-    const baseRevenue = basePrice * baseUnits // 200,000
-    const discountedPrice = basePrice * (1 - discountPct / 100) // 1600
-    const newRevenue = discountedPrice * newUnits // 1600 * 136 = 217,600
-    expect(newRevenue).toBeGreaterThan(baseRevenue)
-  })
-
-  it('verifies Two-Proportion Z-Test statistical calculation', () => {
-    // Control: 100 conv / 1000 trials (10%)
-    // Treatment: 130 conv / 1000 trials (13%)
-    const n1 = 1000, x1 = 100, p1 = x1 / n1
-    const n2 = 1000, x2 = 130, p2 = x2 / n2
-    const pPool = (x1 + x2) / (n1 + n2)
-    const se = Math.sqrt(pPool * (1 - pPool) * (1 / n1 + 1 / n2))
-    const z = (p2 - p1) / se
-
-    expect(p1).toBe(0.10)
-    expect(p2).toBe(0.13)
-    expect(z).toBeGreaterThan(1.96) // Statistically significant at alpha=0.05
+  it('uses the actual product discount calculation', () => {
+    expect(discountPercent(1899, 2499)).toBe(24)
+    expect(discountPercent(100, 100)).toBe(0)
+    expect(discountPercent(100)).toBe(0)
   })
 })

@@ -10,8 +10,8 @@ class SearchRequest(BaseModel):
     colour: Optional[str] = None
     brand: Optional[str] = None
     sort_by: Optional[str] = "relevance" # relevance, price_asc, price_desc, rating
-    page: int = 1
-    limit: int = 20
+    page: int = Field(1, ge=1)
+    limit: int = Field(20, ge=1, le=100)
 
 class ExtractedFilters(BaseModel):
     category: Optional[str] = None

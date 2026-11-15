@@ -4,8 +4,10 @@ from app.models.roadmap import RoadmapTask
 from app.schemas.operations import RoadmapTaskCreate, RoadmapTaskUpdate
 
 def compute_rice_score(reach: float, impact: float, confidence_pct: float, effort: float) -> float:
-    safe_effort = max(0.5, effort)
-    conf_factor = max(0.1, min(1.0, confidence_pct / 100.0))
+    if reach < 0 or impact < 0 or not 0 <= confidence_pct <= 100 or effort <= 0:
+        raise ValueError("Invalid RICE input")
+    safe_effort = effort
+    conf_factor = confidence_pct / 100.0
     # RICE = (Reach * Impact * Confidence) / Effort
     score = (reach * impact * conf_factor) / safe_effort
     return round(score, 1)
@@ -41,7 +43,7 @@ def update_roadmap_task(db: Session, task_id: int, data: RoadmapTaskUpdate) -> R
     if not task:
         raise ValueError(f"Roadmap task {task_id} not found")
 
-    update_dict = data.dict(exclude_unset=True)
+    update_dict = data.model_dump(exclude_unset=True)
     for k, v in update_dict.items():
         setattr(task, k, v)
 
