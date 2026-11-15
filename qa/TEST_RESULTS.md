@@ -1,3 +1,5 @@
+> **Historical reliability-release report.** Current account-upgrade results are in [FINAL_ACCEPTANCE_REPORT.md](FINAL_ACCEPTANCE_REPORT.md) and [END_TO_END_TEST_RESULTS.md](END_TO_END_TEST_RESULTS.md).
+
 # Test results
 
 Final case counts: backend **135/135**, frontend **19/19**, Playwright **11/11**. Total **165 executed, 165 passed, 0 failed, 0 skipped, 0 blocked**. Docker connected smoke checks: **5/5** in addition to the case total. TypeScript and production build passed.

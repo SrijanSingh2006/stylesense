@@ -27,7 +27,7 @@ export const FunnelPage: React.FC = () => {
         setFunnel(f)
         setCohorts(c)
       } catch (err) {
-        console.error('Failed to load funnel analytics:', err)
+        console.error('Failed to load funnel analytics:')
       } finally {
         setLoading(false)
       }

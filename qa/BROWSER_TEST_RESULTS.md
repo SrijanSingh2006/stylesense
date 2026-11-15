@@ -1,3 +1,5 @@
+> **Historical reliability-release report.** Current account-upgrade results are in [FINAL_ACCEPTANCE_REPORT.md](FINAL_ACCEPTANCE_REPORT.md) and [END_TO_END_TEST_RESULTS.md](END_TO_END_TEST_RESULTS.md).
+
 # Browser results
 
 **11 passed, 0 failed, 0 skipped.** Chromium on Linux; Playwright launches the actual backend and serves the production frontend build.

@@ -32,7 +32,7 @@ export const InventoryPage: React.FC = () => {
       const res = await fetchInventory()
       setData(res)
     } catch (err) {
-      console.error('Failed to load inventory data:', err)
+      console.error('Failed to load inventory data:')
     } finally {
       setLoading(false)
     }
@@ -47,7 +47,7 @@ export const InventoryPage: React.FC = () => {
       const fc = await fetchInventoryForecast(productId)
       setForecastModal(fc)
     } catch (err) {
-      console.error('Failed to fetch forecast:', err)
+      console.error('Failed to fetch forecast:')
     }
   }
 

@@ -48,7 +48,7 @@ export const ExperimentListPage: React.FC = () => {
         loadResults(data[0].id)
       }
     } catch (err) {
-      console.error('Failed to load experiments:', err)
+      console.error('Failed to load experiments:')
     } finally {
       setLoading(false)
     }
@@ -60,7 +60,7 @@ export const ExperimentListPage: React.FC = () => {
       const res = await fetchExperimentResults(expId)
       setSelectedExpResults(res)
     } catch (err) {
-      console.error('Failed to load experiment results:', err)
+      console.error('Failed to load experiment results:')
     } finally {
       setResultsLoading(false)
     }
@@ -96,7 +96,7 @@ export const ExperimentListPage: React.FC = () => {
       await updateExperiment(exp.id, { status: nextStatus })
       loadData()
     } catch (err) {
-      console.error('Failed to update status:', err)
+      console.error('Failed to update status:')
     }
   }
 

@@ -1,3 +1,6 @@
+import { useAuthPolicy } from '../auth/useAuthPolicy'
+import { useAuthStore, can } from '../auth/state'
+import { signOut } from '../services/auth'
 import { errorMessage } from '../services/errors'
 import React, { useState, useRef, useEffect } from 'react'
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
@@ -19,41 +22,10 @@ import { useUserStore, type DemoUser } from '../store/useUserStore'
 import { useWishlist } from '../hooks/useWishlist'
 import { visualSearch, trackEvent } from '../services/api'
 
-const DEMO_PERSONAS: DemoUser[] = [
-  {
-    id: 1,
-    display_name: 'Aarav Mehta (Minimalist Urban)',
-    preferred_categories: ['Shirts', 'Jeans', 'Footwear'],
-    preferred_colours: ['Black', 'Navy', 'Olive'],
-    preferred_brands: ['UrbanKnit', 'Aura Denim', 'TerraSole'],
-    budget_min: 1000,
-    budget_max: 6000,
-  },
-  {
-    id: 2,
-    display_name: 'Ananya Sharma (Contemporary Casual)',
-    preferred_categories: ['Dresses', 'T-Shirts', 'Trousers'],
-    preferred_colours: ['Beige', 'White', 'Blue'],
-    preferred_brands: ['VogueCraft', 'MetroTailor', 'Loom & Thread'],
-    budget_min: 1500,
-    budget_max: 8000,
-  },
-  {
-    id: 3,
-    display_name: 'Rohan Verma (Tailored Formal)',
-    preferred_categories: ['Blazers', 'Trousers', 'Footwear'],
-    preferred_colours: ['Charcoal', 'Navy', 'Brown'],
-    preferred_brands: ['MetroTailor', 'TerraSole', 'Artisan Studio'],
-    budget_min: 2500,
-    budget_max: 12000,
-  },
-]
-
 export const StorefrontLayout: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [visualModalOpen, setVisualModalOpen] = useState(false)
   const [visualLoading, setVisualLoading] = useState(false)
-  const [userDropdown, setUserDropdown] = useState(false)
   const [visualError, setVisualError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -62,7 +34,10 @@ export const StorefrontLayout: React.FC = () => {
 
   const { products: wishlistProducts } = useWishlist()
   const itemCount = useCartStore((s) => s.getItemCount())
-  const { currentUser, setCurrentUser } = useUserStore()
+  const { currentUser } = useUserStore()
+  const user = useAuthStore((s) => s.user)
+  const policy = useAuthPolicy()
+  const [authError, setAuthError] = useState('')
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -113,80 +88,20 @@ export const StorefrontLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-cream-100 text-charcoal-900">
       <Link to="/wishlist" className="bg-cream-50 px-4 py-2 text-xs text-brand text-right">Wishlist ({wishlistProducts.length})</Link>
-      {/* Top Bar with Switcher & Portals */}
-      <div className="bg-charcoal-900 text-cream-200 text-xs py-2 px-4 border-b border-charcoal-700">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2 max-w-full">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span className="font-medium tracking-wide truncate text-[11px] sm:text-xs">
-              StyleSense 2.0 Live Prototype · AI-Powered Storefront & Commerce Intelligence
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 sm:gap-5 flex-wrap justify-center sm:justify-end text-[11px] sm:text-xs">
-            {/* Persona Switcher */}
-            <div className="relative">
-              <button
-                onClick={() => setUserDropdown(!userDropdown)}
-                className="flex items-center gap-1.5 py-0.5 px-2.5 rounded bg-charcoal-800 hover:bg-charcoal-700 text-cream-200 transition-colors"
-              >
-                <User className="w-3.5 h-3.5 text-brand-accent" />
-                <span className="max-w-[150px] truncate">{currentUser.display_name}</span>
-                <ChevronDown className="w-3 h-3 text-charcoal-400" />
-              </button>
-
-              {userDropdown && (
-                <div className="absolute right-0 mt-1.5 w-64 bg-white text-charcoal-800 rounded-xl shadow-2xl border border-cream-300 py-1.5 z-50">
-                  <div className="px-3 py-1.5 border-b border-cream-200 text-[11px] font-semibold text-charcoal-500 uppercase tracking-wider">
-                    Simulate Customer Profile
-                  </div>
-                  {DEMO_PERSONAS.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => {
-                        setCurrentUser(p)
-                        setUserDropdown(false)
-                      }}
-                      className="w-full text-left px-3 py-2 text-xs hover:bg-cream-100 flex items-center justify-between"
-                    >
-                      <span className="font-medium">{p.display_name}</span>
-                      {currentUser.id === p.id && (
-                        <Check className="w-3.5 h-3.5 text-brand" />
-                      )}
-                    </button>
-                  ))}
-                  <div className="border-t border-cream-200 mt-1 pt-1 px-3 py-1">
-                    <Link
-                      to="/account/demo"
-                      onClick={() => setUserDropdown(false)}
-                      className="text-[11px] text-brand hover:underline font-medium block"
-                    >
-                      View Persona Preferences →
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Portal Switchers */}
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-1.5 text-cream-300 hover:text-white font-medium transition-colors"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Product Intelligence</span>
-            </Link>
-            <Link
-              to="/operations/inventory"
-              className="flex items-center gap-1.5 text-cream-300 hover:text-white font-medium transition-colors"
-            >
-              <Sliders className="w-3.5 h-3.5 text-amber-400" />
-              <span>Business Operations</span>
-            </Link>
-          </div>
+      <div className="bg-charcoal-900 text-cream-100 px-4 py-3">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between gap-3 text-xs">
+          <span>Personal discovery. One account. Clearly simulated commerce.</span>
+          <nav className="flex flex-wrap items-center gap-4">
+            {user ? <><Link to="/account">{user.full_name} · My account</Link><Link to="/account/notifications">Notifications</Link>
+              {can(user, 'analytics.read') && <Link to="/dashboard">Product intelligence</Link>}
+              {can(user, 'inventory.read') && <Link to="/operations">Operations</Link>}
+              {can(user, 'users.manage') && <Link to="/admin">Administration</Link>}
+              <button onClick={async () => { try { await signOut(); navigate('/login') } catch (e) { setAuthError(errorMessage(e)) } }}>Sign out</button></> : <><Link to="/login">Sign in</Link><Link to="/register">Create account</Link></>}
+          </nav>
         </div>
       </div>
-
+      {authError && <p role="alert" className="p-3 text-sm text-red-800">{authError}</p>}
+      {policy.data?.maintenance_notice && <p role="status" className="bg-amber-50 text-amber-900 p-3 text-center text-sm">{policy.data.maintenance_notice}</p>}
       {/* Main Editorial Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-cream-300 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -386,9 +301,9 @@ export const StorefrontLayout: React.FC = () => {
                 Product Intelligence
               </h4>
               <ul className="space-y-2 text-xs text-charcoal-400">
-                <li><Link to="/dashboard" className="hover:text-white">Executive Overview</Link></li>
+                {can(user, "analytics.read") && <li><Link to="/dashboard" className="hover:text-white">Executive Overview</Link></li>}
                 <li><Link to="/dashboard/analytics" className="hover:text-white">Funnel & Cohorts</Link></li>
-                <li><Link to="/dashboard/experiments" className="hover:text-white">A/B Testing Platform</Link></li>
+                {can(user, "experiments.manage") && <li><Link to="/dashboard/experiments" className="hover:text-white">A/B Testing Platform</Link></li>}
                 <li><Link to="/dashboard/segments" className="hover:text-white">RFM Customer Segmentation</Link></li>
               </ul>
             </div>
@@ -398,10 +313,10 @@ export const StorefrontLayout: React.FC = () => {
                 Business Operations
               </h4>
               <ul className="space-y-2 text-xs text-charcoal-400">
-                <li><Link to="/operations/inventory" className="hover:text-white">Inventory Intelligence</Link></li>
+                {can(user, "inventory.read") && <li><Link to="/operations/inventory" className="hover:text-white">Inventory Intelligence</Link></li>}
                 <li><Link to="/operations/returns" className="hover:text-white">Return Analytics</Link></li>
                 <li><Link to="/operations/catalogue" className="hover:text-white">Catalogue Quality Audit</Link></li>
-                <li><Link to="/operations/roadmap" className="hover:text-white">RICE Product Roadmap</Link></li>
+                {can(user, "roadmap.manage") && <li><Link to="/operations/roadmap" className="hover:text-white">RICE Product Roadmap</Link></li>}
               </ul>
             </div>
           </div>

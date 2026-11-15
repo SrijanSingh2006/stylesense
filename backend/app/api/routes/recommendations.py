@@ -1,28 +1,62 @@
+from app.services.security import optional_user, own_customer, has_permission
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
 from app.db.session import get_db
 from app.schemas.recommendations import RecommendationResponse, CompleteLookResponse
-from app.services.recommendation import get_recommendations_for_customer, get_complete_look
+from app.services.recommendation import (
+    get_recommendations_for_customer,
+    get_complete_look,
+)
 from app.models.product import Product
 
 router = APIRouter()
 
-@router.get("/recommendations/{customer_id}", response_model=RecommendationResponse, tags=["Recommendations"])
+
+@router.get(
+    "/recommendations/{customer_id}",
+    response_model=RecommendationResponse,
+    tags=["Recommendations"],
+)
 def get_recommendations(
     customer_id: int,
     limit: int = Query(10, ge=1, le=50),
     category: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user=Depends(optional_user),
 ):
-    return get_recommendations_for_customer(db, customer_id, limit=limit, category_filter=category)
+    if customer_id != 0:
+        if not user:
+            raise HTTPException(401, "Sign in required")
+        if not has_permission(user, "recommendations.read"):
+            raise HTTPException(
+                403, "Personal recommendations are not available for this role"
+            )
+        own_customer(user, customer_id)
+    return get_recommendations_for_customer(
+        db, customer_id or None, limit=limit, category_filter=category
+    )
 
-@router.get("/recommendations/{customer_id}/complete-look", response_model=CompleteLookResponse, tags=["Recommendations"])
+
+@router.get(
+    "/recommendations/{customer_id}/complete-look",
+    response_model=CompleteLookResponse,
+    tags=["Recommendations"],
+)
 def get_look_recommendation(
     customer_id: int,
     product_id: Optional[int] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user=Depends(optional_user),
 ):
+    if customer_id != 0:
+        if not user:
+            raise HTTPException(401, "Sign in required")
+        if not has_permission(user, "recommendations.read"):
+            raise HTTPException(
+                403, "Personal recommendations are not available for this role"
+            )
+        own_customer(user, customer_id)
     target_id = product_id
     if not target_id:
         first_prod = db.query(Product).filter(Product.active == True).first()

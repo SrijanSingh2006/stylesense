@@ -1,5 +1,28 @@
-
 > stylesense-frontend@2.0.0 test
-> vitest run --reporter=json --outputFile=../qa/vitest-results.json
+> vitest run --reporter=default --reporter=junit --outputFile=../qa/frontend-test-results.xml
 
-JSON report written to /workspace/work/stylesense/qa/vitest-results.json
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:15:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /workspace/work/stylesense/frontend
+
+ ✓ src/tests/auth.test.tsx (19 tests) 1009ms
+   ✓ Registration and login forms (3)
+     ✓ requires password quality, confirmation and terms 312ms
+ ✓ src/tests/reliability.test.tsx (14 tests) 1651ms
+   ✓ API error propagation and checkout integrity (9)
+     ✓ preserves cart and input on checkout error 400 408ms
+ ✓ src/tests/account-ui.test.tsx (15 tests) 566ms
+ ✓ src/tests/components.test.tsx (5 tests) 99ms
+
+ Test Files  4 passed (4)
+      Tests  53 passed (53)
+   Start at  20:12:59
+   Duration  15.74s (environment 47%, tests 23%, import 21%, transform 7%)
+
+Environment  jsdom was created 4 times · 6.74s total, 47% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+JUNIT report written to /workspace/work/stylesense/qa/frontend-test-results.xml

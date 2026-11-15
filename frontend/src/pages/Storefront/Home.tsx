@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -43,7 +44,7 @@ export const HomePage: React.FC = () => {
           setCompleteLook(lookRes)
         }
       } catch (err) {
-        console.error('Failed to load home page data:', err)
+        if (!axios.isCancel(err)) console.error('Failed to load home page data:')
       } finally {
         setLoading(false)
       }
@@ -51,14 +52,11 @@ export const HomePage: React.FC = () => {
     loadHomeData()
   }, [currentUser])
 
-  const handleAddOutfitToCart = () => {
+  const handleAddOutfitToCart = async () => {
     if (!completeLook) return
-    // Add primary item
-    addItem(completeLook.primary_product, completeLook.primary_product.sizes_available?.[0] || 'M', 1)
-    // Add each complementary item
-    completeLook.outfit_items.forEach((item) => {
-      addItem(item, item.sizes_available?.[0] || 'M', 1)
-    })
+    for (const item of [completeLook.primary_product, ...completeLook.outfit_items]) {
+      if (!(await addItem(item, item.sizes_available?.[0] || 'M', 1))) return
+    }
     navigate('/cart')
   }
 

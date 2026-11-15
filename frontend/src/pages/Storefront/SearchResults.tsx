@@ -45,7 +45,7 @@ export const SearchResultsPage: React.FC = () => {
         })
         setResponse(res)
       } catch (err) {
-        console.error('Search failed:', err)
+        console.error('Search failed:')
       } finally {
         setLoading(false)
       }

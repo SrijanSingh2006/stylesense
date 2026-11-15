@@ -15,7 +15,7 @@ export const CataloguePage: React.FC = () => {
       const res = await fetchCatalogueQuality()
       setData(res)
     } catch (err) {
-      console.error('Failed to audit catalogue:', err)
+      console.error('Failed to audit catalogue:')
     } finally {
       setLoading(false)
     }
@@ -31,7 +31,7 @@ export const CataloguePage: React.FC = () => {
       await resolveCatalogueIssue(issueId)
       load()
     } catch (err) {
-      console.error('Failed to resolve issue:', err)
+      console.error('Failed to resolve issue:')
     } finally {
       setResolvingId(null)
     }

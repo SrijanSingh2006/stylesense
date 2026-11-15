@@ -31,11 +31,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   }
   const addItem = useCartStore((s) => s.addItem)
 
-  const handleQuickAdd = (e: React.MouseEvent) => {
+  const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     const size = product.sizes_available?.[0] || 'M'
-    addItem(product, size, 1)
+    const added = await addItem(product, size, 1)
+    if (!added) return
     setAddedAnimation(true)
     setTimeout(() => setAddedAnimation(false), 1200)
   }

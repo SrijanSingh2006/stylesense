@@ -50,7 +50,7 @@ export const RoadmapPage: React.FC = () => {
       const data = await fetchRoadmapTasks()
       setTasks(data)
     } catch (err) {
-      console.error('Failed to load roadmap tasks:', err)
+      console.error('Failed to load roadmap tasks:')
     } finally {
       setLoading(false)
     }
@@ -79,7 +79,7 @@ export const RoadmapPage: React.FC = () => {
       setDescription('')
       load()
     } catch (err) {
-      console.error('Failed to create task:', err)
+      console.error('Failed to create task:')
     }
   }
 
@@ -88,7 +88,7 @@ export const RoadmapPage: React.FC = () => {
       await updateRoadmapTask(task.id, { status: newStatus })
       load()
     } catch (err) {
-      console.error('Failed to move task:', err)
+      console.error('Failed to move task:')
     }
   }
 
@@ -97,7 +97,7 @@ export const RoadmapPage: React.FC = () => {
       await deleteRoadmapTask(taskId)
       load()
     } catch (err) {
-      console.error('Failed to delete task:', err)
+      console.error('Failed to delete task:')
     }
   }
 

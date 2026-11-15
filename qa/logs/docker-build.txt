@@ -1,431 +1,47 @@
 #1 [internal] load local bake definitions
-#1 reading from stdin 1.57kB done
+#1 reading from stdin 819B done
 #1 DONE 0.0s
 
-#2 [backend internal] load build definition from Dockerfile
-#2 transferring dockerfile: 732B done
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 798B done
 #2 DONE 0.0s
 
-#3 [frontend internal] load build definition from Dockerfile
-#3 transferring dockerfile: 570B 0.0s done
-#3 DONE 0.0s
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 0.6s
 
-#4 [frontend internal] load metadata for docker.io/library/nginx:stable-alpine
-#4 ...
+#4 [internal] load .dockerignore
+#4 transferring context: 131B 0.0s done
+#4 DONE 0.0s
 
-#5 [frontend internal] load metadata for docker.io/library/node:22-bookworm-slim
-#5 DONE 2.2s
+#5 [stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#5 DONE 0.0s
 
-#4 [frontend internal] load metadata for docker.io/library/nginx:stable-alpine
-#4 DONE 2.3s
+#6 [internal] load build context
+#6 transferring context: 747.72kB 0.5s done
+#6 DONE 0.5s
 
-#6 [backend internal] load metadata for docker.io/library/python:3.12-slim
-#6 DONE 2.3s
+#7 [stage-0 2/6] WORKDIR /app
+#7 CACHED
 
-#7 [frontend internal] load .dockerignore
-#7 transferring context: 89B 0.0s done
-#7 DONE 0.0s
+#8 [stage-0 3/6] COPY requirements.txt ./
+#8 CACHED
 
-#8 [backend internal] load .dockerignore
-#8 transferring context: 93B 0.0s done
-#8 DONE 0.1s
+#9 [stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
+#9 CACHED
 
-#9 [backend internal] load build context
-#9 DONE 0.0s
+#10 [stage-0 5/6] COPY . .
+#10 DONE 25.5s
 
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 0.2s done
-#10 ...
+#11 [stage-0 6/6] RUN mkdir -p /data /app/uploads
+#11 DONE 9.1s
 
-#11 [frontend internal] load build context
-#11 transferring context: 487.01kB 0.3s done
-#11 DONE 0.3s
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 1.6s done
+#12 writing image sha256:a1d8b50eade03935c73a266c75ad5806f692de834de606afb95268349aff746a done
+#12 naming to docker.io/library/stylesense-accounts-backend done
+#12 DONE 1.7s
 
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 10.37kB / 10.37kB done
-#10 sha256:05a994d2344eb364cc186910f4fc8786a38215f39f00d0acc25bff33a08f4177 1.75kB / 1.75kB done
-#10 sha256:78976a69c067520ef8be34cde307ef9f6fea6dcefa50edb57039773d241ca0db 5.66kB / 5.66kB done
-#10 ...
-
-#9 [backend internal] load build context
-#9 transferring context: 470.98kB 0.4s done
-#9 DONE 0.5s
-
-#12 [frontend stage-1 1/3] FROM docker.io/library/nginx:stable-alpine@sha256:901e593c95dc85f5a729f5765516321366ef4ac401821431d408897e95287d0a
-#12 resolve docker.io/library/nginx:stable-alpine@sha256:901e593c95dc85f5a729f5765516321366ef4ac401821431d408897e95287d0a 0.2s done
-#12 sha256:901e593c95dc85f5a729f5765516321366ef4ac401821431d408897e95287d0a 10.32kB / 10.32kB done
-#12 sha256:bb8f722b4be005fcd7827816a136ab779fd40185d85b5171be915cc7fc0575c7 2.49kB / 2.49kB done
-#12 sha256:1390db6b01a8b0c865b157c7f036b0772534418b1701f598737de546d208b6e4 12.30kB / 12.30kB done
-#12 DONE 0.6s
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 resolve docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee 0.1s done
-#13 sha256:47725aca53d3295ec2d3be8f62726599b3033cc262edc2c7e429909b3ac599fc 1.93kB / 1.93kB done
-#13 sha256:b774d993885c47eca14db241ba8cc7e5789235142f76e4a2a6a65ec350a1bac0 6.77kB / 6.77kB done
-#13 sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee 5.22kB / 5.22kB done
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 0B / 28.25MB 0.5s
-#13 sha256:076cba098ace87d6950e8fa4cc530bfe59834eba28f30061e8526d6f00bf52c8 0B / 3.31kB 0.5s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 0B / 49.90MB 0.5s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 4.19MB / 28.25MB 0.7s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 8.39MB / 28.25MB 0.9s
-#13 sha256:076cba098ace87d6950e8fa4cc530bfe59834eba28f30061e8526d6f00bf52c8 3.31kB / 3.31kB 0.8s done
-#13 sha256:aa4e8910862263c3bad50c754fb555bbbb7661c41e35ba703ae082ec6749c175 0B / 1.71MB 0.9s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 12.58MB / 28.25MB 1.0s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 16.78MB / 28.25MB 1.2s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 6.29MB / 49.90MB 1.2s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 18.87MB / 28.25MB 1.3s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 22.02MB / 28.25MB 1.5s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 9.44MB / 49.90MB 1.5s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 24.12MB / 28.25MB 1.6s
-#13 sha256:aa4e8910862263c3bad50c754fb555bbbb7661c41e35ba703ae082ec6749c175 1.71MB / 1.71MB 1.6s
-#13 sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 28.25MB / 28.25MB 1.8s done
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 16.78MB / 49.90MB 1.8s
-#13 sha256:aa4e8910862263c3bad50c754fb555bbbb7661c41e35ba703ae082ec6749c175 1.71MB / 1.71MB 1.7s done
-#13 sha256:cce880541c96dc730321857781d113e3c75c0cb383f9510300922762006d734e 0B / 448B 1.8s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 20.97MB / 49.90MB 1.9s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 25.17MB / 49.90MB 2.1s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 28.31MB / 49.90MB 2.3s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 31.46MB / 49.90MB 2.5s
-#13 sha256:cce880541c96dc730321857781d113e3c75c0cb383f9510300922762006d734e 448B / 448B 2.4s done
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 34.60MB / 49.90MB 2.8s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 37.75MB / 49.90MB 3.0s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 40.89MB / 49.90MB 3.3s
-#13 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 44.04MB / 49.90MB 3.6s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 47.19MB / 49.90MB 3.9s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 49.90MB / 49.90MB 4.1s
-#13 sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 49.90MB / 49.90MB 4.3s done
-#13 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 5.1s
-#13 ...
-
-#14 [frontend stage-1 2/3] COPY nginx.conf /etc/nginx/conf.d/default.conf
-#14 DONE 10.0s
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 ...
-
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 29.86MB / 29.86MB 5.0s done
-#10 sha256:68bced9e0afa4479df17c3646e27c7c7e9ce9ba70c0e6c73b6826487b89037d9 1.29MB / 1.29MB 3.3s done
-#10 sha256:2dc99d2d0a39fce31e37615eb4c932e16dcc4c2b0ce9993714280081b5dbe085 12.12MB / 12.12MB 4.8s done
-#10 sha256:05e0eee5572e9c9f50408a2132590133b830a668a1cf2ff2b150f19c57707e2b 248B / 248B 4.9s done
-#10 extracting sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 4.7s
-#10 ...
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 11.1s
-#13 ...
-
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 extracting sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 12.2s
-#10 extracting sha256:37fb86c2a767b88d500c6872195f88078f64765fe0d2f9cc375cc2efbd4c0a41 13.8s done
-#10 extracting sha256:68bced9e0afa4479df17c3646e27c7c7e9ce9ba70c0e6c73b6826487b89037d9
-#10 ...
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 17.7s
-#13 extracting sha256:dd051e1b8c92ff101fa3071ab97ea4924885942f15644e01c3dc095764e863e3 20.3s done
-#13 extracting sha256:076cba098ace87d6950e8fa4cc530bfe59834eba28f30061e8526d6f00bf52c8
-#13 extracting sha256:076cba098ace87d6950e8fa4cc530bfe59834eba28f30061e8526d6f00bf52c8 done
-#13 ...
-
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 extracting sha256:68bced9e0afa4479df17c3646e27c7c7e9ce9ba70c0e6c73b6826487b89037d9 6.5s done
-#10 extracting sha256:2dc99d2d0a39fce31e37615eb4c932e16dcc4c2b0ce9993714280081b5dbe085
-#10 extracting sha256:2dc99d2d0a39fce31e37615eb4c932e16dcc4c2b0ce9993714280081b5dbe085 5.1s
-#10 extracting sha256:2dc99d2d0a39fce31e37615eb4c932e16dcc4c2b0ce9993714280081b5dbe085 10.3s
-#10 ...
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 extracting sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79
-#13 extracting sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 5.2s
-#13 extracting sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 10.4s
-#13 ...
-
-#10 [backend stage-0 1/6] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
-#10 extracting sha256:2dc99d2d0a39fce31e37615eb4c932e16dcc4c2b0ce9993714280081b5dbe085 13.6s done
-#10 extracting sha256:05e0eee5572e9c9f50408a2132590133b830a668a1cf2ff2b150f19c57707e2b done
-#10 DONE 49.1s
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 extracting sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 15.8s
-#13 extracting sha256:0c4023204e5b4bcd551170279c40ff58285cc8ea87ddf9ff25cb3713e6ecda79 17.1s done
-#13 extracting sha256:aa4e8910862263c3bad50c754fb555bbbb7661c41e35ba703ae082ec6749c175
-#13 ...
-
-#15 [backend stage-0 2/6] WORKDIR /app
-#15 DONE 8.1s
-
-#16 [backend stage-0 3/6] COPY requirements.txt ./
-#16 DONE 4.2s
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 extracting sha256:aa4e8910862263c3bad50c754fb555bbbb7661c41e35ba703ae082ec6749c175 6.6s done
-#13 extracting sha256:cce880541c96dc730321857781d113e3c75c0cb383f9510300922762006d734e done
-#13 ...
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 ...
-
-#13 [frontend build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:e9f565d32859f0cbfb52125eafe8be39390f24dac302dc3cdf566e8ba3ab21ee
-#13 DONE 71.9s
-
-#18 [frontend build 2/6] WORKDIR /app
-#18 DONE 4.3s
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 ...
-
-#19 [frontend build 3/6] COPY package*.json ./
-#19 DONE 5.6s
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 15.45 Collecting fastapi<1,>=0.110.0 (from -r requirements.txt (line 1))
-#17 15.75   Downloading fastapi-0.163.1-py3-none-any.whl.metadata (27 kB)
-#17 16.28 Collecting uvicorn<1,>=0.28.0 (from -r requirements.txt (line 2))
-#17 16.44   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
-#17 17.94 Collecting sqlalchemy<3,>=2.0.0 (from -r requirements.txt (line 3))
-#17 18.10   Downloading sqlalchemy-2.1.8-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
-#17 18.69 Collecting pydantic<3,>=2.6.0 (from -r requirements.txt (line 4))
-#17 18.74   Downloading pydantic-2.14.3-py3-none-any.whl.metadata (141 kB)
-#17 20.27 Collecting numpy<3,>=1.26.0 (from -r requirements.txt (line 5))
-#17 20.34   Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
-#17 21.19 Collecting pandas<4,>=2.2.0 (from -r requirements.txt (line 6))
-#17 21.34   Downloading pandas-3.1.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (16 kB)
-#17 21.75 Collecting scikit-learn<2,>=1.4.0 (from -r requirements.txt (line 7))
-#17 21.84   Downloading scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.3 kB)
-#17 22.88 Collecting pillow<14,>=10.2.0 (from -r requirements.txt (line 8))
-#17 22.94   Downloading pillow-13.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
-#17 23.05 Collecting python-multipart<1,>=0.0.9 (from -r requirements.txt (line 9))
-#17 23.14   Downloading python_multipart-0.0.33-py3-none-any.whl.metadata (6.3 kB)
-#17 23.37 Collecting pytest<10,>=8.0.0 (from -r requirements.txt (line 10))
-#17 23.44   Downloading pytest-9.2.0-py3-none-any.whl.metadata (7.9 kB)
-#17 23.58 Collecting httpx<1,>=0.27.0 (from -r requirements.txt (line 11))
-#17 23.65   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
-#17 23.78 Collecting alembic<2,>=1.13 (from -r requirements.txt (line 12))
-#17 23.84   Downloading alembic-1.20.1-py3-none-any.whl.metadata (7.3 kB)
-#17 24.04 Collecting psycopg<4,>=3.1 (from psycopg[binary]<4,>=3.1->-r requirements.txt (line 13))
-#17 24.09   Downloading psycopg-3.3.9-py3-none-any.whl.metadata (4.4 kB)
-#17 24.65 Collecting scipy<2,>=1.11 (from -r requirements.txt (line 14))
-#17 24.70   Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
-#17 24.86 Collecting pytest-xdist<4,>=3 (from -r requirements.txt (line 15))
-#17 24.94   Downloading pytest_xdist-3.8.0-py3-none-any.whl.metadata (3.0 kB)
-#17 25.09 Collecting starlette>=0.46.0 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 25.15   Downloading starlette-1.10.0-py3-none-any.whl.metadata (6.6 kB)
-#17 25.24 Collecting anyio>=4.1.0 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 25.34   Downloading anyio-4.16.0-py3-none-any.whl.metadata (4.7 kB)
-#17 25.46 Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 25.50   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
-#17 25.60 Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 25.64   Downloading typing_inspection-0.4.5-py3-none-any.whl.metadata (2.6 kB)
-#17 25.74 Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 25.78   Downloading annotated_doc-0.0.6-py3-none-any.whl.metadata (6.5 kB)
-#17 25.89 Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.110.0->-r requirements.txt (line 1))
-#17 26.00   Downloading opentelemetry_api-1.45.2-py3-none-any.whl.metadata (1.4 kB)
-#17 26.14 Collecting click>=7.0 (from uvicorn<1,>=0.28.0->-r requirements.txt (line 2))
-#17 26.46   Downloading click-8.5.1-py3-none-any.whl.metadata (2.6 kB)
-#17 26.55 Collecting h11>=0.8 (from uvicorn<1,>=0.28.0->-r requirements.txt (line 2))
-#17 26.62   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
-#17 26.75 Collecting annotated-types>=0.6.0 (from pydantic<3,>=2.6.0->-r requirements.txt (line 4))
-#17 26.80   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
-#17 29.75 Collecting pydantic-core==2.50.4 (from pydantic<3,>=2.6.0->-r requirements.txt (line 4))
-#17 29.80   Downloading pydantic_core-2.50.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.6 kB)
-#17 30.06 Collecting python-dateutil>=2.9.0 (from pandas<4,>=2.2.0->-r requirements.txt (line 6))
-#17 30.14   Downloading python_dateutil-4.0.0-py3-none-any.whl.metadata (7.3 kB)
-#17 ...
-
-#20 [frontend build 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then NODE_EXTRA_CA_CERTS=/run/secrets/proxy_ca npm ci; else npm ci; fi
-#20 ...
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 30.56 Collecting joblib>=1.4.0 (from scikit-learn<2,>=1.4.0->-r requirements.txt (line 7))
-#17 30.64   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
-#17 30.95 Collecting narwhals>=2.0.1 (from scikit-learn<2,>=1.4.0->-r requirements.txt (line 7))
-#17 31.00   Downloading narwhals-2.28.0-py3-none-any.whl.metadata (15 kB)
-#17 31.15 Collecting threadpoolctl>=3.5.0 (from scikit-learn<2,>=1.4.0->-r requirements.txt (line 7))
-#17 31.18   Downloading threadpoolctl-3.8.0-py3-none-any.whl.metadata (29 kB)
-#17 31.30 Collecting iniconfig>=2 (from pytest<10,>=8.0.0->-r requirements.txt (line 10))
-#17 31.36   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
-#17 31.47 Collecting packaging>=24 (from pytest<10,>=8.0.0->-r requirements.txt (line 10))
-#17 31.54   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
-#17 31.66 Collecting pluggy<2,>=1.6 (from pytest<10,>=8.0.0->-r requirements.txt (line 10))
-#17 31.74   Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
-#17 32.10 Collecting pygments>=2.15 (from pytest<10,>=8.0.0->-r requirements.txt (line 10))
-#17 32.16   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
-#17 32.34 Collecting certifi (from httpx<1,>=0.27.0->-r requirements.txt (line 11))
-#17 32.38   Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
-#17 32.59 Collecting httpcore==1.* (from httpx<1,>=0.27.0->-r requirements.txt (line 11))
-#17 32.65   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
-#17 32.76 Collecting idna (from httpx<1,>=0.27.0->-r requirements.txt (line 11))
-#17 32.84   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
-#17 32.96 Collecting Mako (from alembic<2,>=1.13->-r requirements.txt (line 12))
-#17 33.04   Downloading mako-1.4.3-py3-none-any.whl.metadata (2.9 kB)
-#17 33.35 Collecting execnet>=2.1 (from pytest-xdist<4,>=3->-r requirements.txt (line 15))
-#17 33.66   Downloading execnet-2.1.2-py3-none-any.whl.metadata (2.9 kB)
-#17 34.84 Collecting psycopg-binary==3.3.9 (from psycopg[binary]<4,>=3.1->-r requirements.txt (line 13))
-#17 34.96   Downloading psycopg_binary-3.3.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
-#17 35.30 Collecting cloudpickle>=3.0 (from joblib>=1.4.0->scikit-learn<2,>=1.4.0->-r requirements.txt (line 7))
-#17 35.44   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
-#17 35.79 Collecting tzdata (from python-dateutil>=2.9.0->pandas<4,>=2.2.0->-r requirements.txt (line 6))
-#17 35.85   Downloading tzdata-2026.6-py2.py3-none-any.whl.metadata (1.4 kB)
-#17 36.64 Collecting MarkupSafe>=2.0 (from Mako->alembic<2,>=1.13->-r requirements.txt (line 12))
-#17 36.69   Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
-#17 36.84 Downloading fastapi-0.163.1-py3-none-any.whl (154 kB)
-#17 36.95 Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
-#17 37.00 Downloading sqlalchemy-2.1.8-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
-#17 37.26    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 20.9 MB/s eta 0:00:00
-#17 37.35 Downloading pydantic-2.14.3-py3-none-any.whl (494 kB)
-#17 37.45 Downloading pydantic_core-2.50.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (2.3 MB)
-#17 37.54    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 22.6 MB/s eta 0:00:00
-#17 37.60 Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
-#17 38.59    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 17.5 MB/s eta 0:00:00
-#17 38.65 Downloading pandas-3.1.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.0 MB)
-#17 39.26    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 20.1 MB/s eta 0:00:00
-#17 39.37 Downloading scikit_learn-1.9.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.2 MB)
-#17 39.76    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 24.3 MB/s eta 0:00:00
-#17 39.90 Downloading pillow-13.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.1 MB)
-#17 40.35    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.1/7.1 MB 17.2 MB/s eta 0:00:00
-#17 40.45 Downloading python_multipart-0.0.33-py3-none-any.whl (32 kB)
-#17 40.56 Downloading pytest-9.2.0-py3-none-any.whl (411 kB)
-#17 40.66 Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
-#17 40.75 Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
-#17 40.84 Downloading alembic-1.20.1-py3-none-any.whl (270 kB)
-#17 40.90 Downloading psycopg-3.3.9-py3-none-any.whl (219 kB)
-#17 41.04 Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
-#17 42.15    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 31.7 MB/s eta 0:00:00
-#17 42.24 Downloading pytest_xdist-3.8.0-py3-none-any.whl (46 kB)
-#17 42.28 Downloading psycopg_binary-3.3.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.9 MB)
-#17 42.46    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.9/3.9 MB 22.0 MB/s eta 0:00:00
-#17 42.54 Downloading annotated_doc-0.0.6-py3-none-any.whl (5.3 kB)
-#17 42.59 Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
-#17 42.65 Downloading anyio-4.16.0-py3-none-any.whl (134 kB)
-#17 42.70 Downloading click-8.5.1-py3-none-any.whl (126 kB)
-#17 42.74 Downloading execnet-2.1.2-py3-none-any.whl (40 kB)
-#17 42.84 Downloading h11-0.16.0-py3-none-any.whl (37 kB)
-#17 42.88 Downloading idna-3.20-py3-none-any.whl (69 kB)
-#17 42.95 Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
-#17 43.00 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
-#17 43.05 Downloading narwhals-2.28.0-py3-none-any.whl (490 kB)
-#17 43.14 Downloading opentelemetry_api-1.45.2-py3-none-any.whl (60 kB)
-#17 43.20 Downloading packaging-26.3-py3-none-any.whl (129 kB)
-#17 43.29 Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
-#17 43.34 Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
-#17 43.38    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 36.7 MB/s eta 0:00:00
-#17 43.44 Downloading python_dateutil-4.0.0-py3-none-any.whl (92 kB)
-#17 43.49 Downloading starlette-1.10.0-py3-none-any.whl (80 kB)
-#17 43.55 Downloading threadpoolctl-3.8.0-py3-none-any.whl (32 kB)
-#17 43.65 Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
-#17 43.74 Downloading typing_inspection-0.4.5-py3-none-any.whl (14 kB)
-#17 43.80 Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
-#17 43.89 Downloading mako-1.4.3-py3-none-any.whl (80 kB)
-#17 43.95 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
-#17 43.98 Downloading markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
-#17 44.05 Downloading tzdata-2026.6-py2.py3-none-any.whl (348 kB)
-#17 45.06 Installing collected packages: tzdata, typing-extensions, threadpoolctl, python-multipart, pygments, psycopg-binary, pluggy, pillow, packaging, numpy, narwhals, MarkupSafe, iniconfig, idna, h11, execnet, cloudpickle, click, certifi, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, scipy, python-dateutil, pytest, pydantic-core, psycopg, opentelemetry-api, Mako, joblib, httpcore, anyio, starlette, scikit-learn, pytest-xdist, pydantic, pandas, httpx, alembic, fastapi
-#17 ...
-
-#20 [frontend build 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then NODE_EXTRA_CA_CERTS=/run/secrets/proxy_ca npm ci; else npm ci; fi
-#20 40.39 npm warn deprecated recharts@2.15.4: 1.x and 2.x branches are no longer active. Bump to Recharts v3 to receive latest features and bugfixes. See https://github.com/recharts/recharts/wiki/3.0-migration-guide
-#20 48.76
-#20 48.76 added 305 packages, and audited 306 packages in 42s
-#20 48.76
-#20 48.76 62 packages are looking for funding
-#20 48.76   run `npm fund` for details
-#20 48.97
-#20 48.97 7 vulnerabilities (4 moderate, 1 high, 2 critical)
-#20 48.97
-#20 48.97 To address all issues (including breaking changes), run:
-#20 48.97   npm audit fix --force
-#20 48.97
-#20 48.97 Run `npm audit` for details.
-#20 48.97 npm notice
-#20 48.97 npm notice New major version of npm available! 10.9.9 -> 12.2.2
-#20 48.97 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
-#20 48.97 npm notice To update run: npm install -g npm@12.2.2
-#20 48.97 npm notice
-#20 DONE 49.3s
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 ...
-
-#21 [frontend build 5/6] COPY . .
-#21 DONE 8.6s
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 ...
-
-#22 [frontend build 6/6] RUN npm run build
-#22 16.65
-#22 16.65 > stylesense-frontend@2.0.0 build
-#22 16.65 > tsc && vite build
-#22 16.65
-#22 35.95 vite v5.4.21 building for production...
-#22 36.24 transforming...
-#22 ...
-
-#17 [backend stage-0 4/6] RUN --mount=type=secret,id=proxy_ca if [ -f /run/secrets/proxy_ca ]; then PIP_CERT=/run/secrets/proxy_ca pip install --no-cache-dir -r requirements.txt; else pip install --no-cache-dir -r requirements.txt; fi
-#17 119.3 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
-#17 119.3 Successfully installed Mako-1.4.3 MarkupSafe-3.0.4 alembic-1.20.1 annotated-doc-0.0.6 annotated-types-0.8.0 anyio-4.16.0 certifi-2026.10.23 click-8.5.1 cloudpickle-3.1.2 execnet-2.1.2 fastapi-0.163.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.1 joblib-1.6.0 narwhals-2.28.0 numpy-2.5.4 opentelemetry-api-1.45.2 packaging-26.3 pandas-3.1.1 pillow-13.0.0 pluggy-1.7.0 psycopg-3.3.9 psycopg-binary-3.3.9 pydantic-2.14.3 pydantic-core-2.50.4 pygments-2.21.0 pytest-9.2.0 pytest-xdist-3.8.0 python-dateutil-4.0.0 python-multipart-0.0.33 scikit-learn-1.9.1 scipy-1.18.1 sqlalchemy-2.1.8 starlette-1.10.0 threadpoolctl-3.8.0 typing-extensions-4.16.0 typing-inspection-0.4.5 tzdata-2026.6 uvicorn-0.54.0
-#17 119.6
-#17 119.6 [notice] A new release of pip is available: 25.0.1 -> 26.3
-#17 119.6 [notice] To update, run: pip install --upgrade pip
-#17 DONE 120.2s
-
-#22 [frontend build 6/6] RUN npm run build
-#22 ...
-
-#23 [backend stage-0 5/6] COPY . .
-#23 ...
-
-#22 [frontend build 6/6] RUN npm run build
-#22 56.10 ✓ 2230 modules transformed.
-#22 58.38 rendering chunks...
-#22 58.40 computing gzip size...
-#22 58.50
-#22 58.50 (!) Some chunks are larger than 500 kB after minification. Consider:
-#22 58.50 - Using dynamic import() to code-split the application
-#22 58.50 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
-#22 58.50 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-#22 58.51 dist/index.html                   1.02 kB │ gzip:   0.60 kB
-#22 58.51 dist/assets/index-BWAlrfxu.css   37.24 kB │ gzip:   6.74 kB
-#22 58.51 dist/assets/index-pZjdq7ES.js   848.38 kB │ gzip: 235.27 kB
-#22 58.51 ✓ built in 22.36s
-#22 DONE 58.8s
-
-#23 [backend stage-0 5/6] COPY . .
-#23 ...
-
-#24 [frontend stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
-#24 DONE 1.2s
-
-#23 [backend stage-0 5/6] COPY . .
-#23 ...
-
-#25 [frontend] exporting to image
-#25 exporting layers
-#25 exporting layers 0.3s done
-#25 writing image sha256:baf38817a06f96d596de8634151490674d54a78f21deb3aa21376c40af4c85f6 done
-#25 naming to docker.io/library/stylesense-remediation-frontend done
-#25 DONE 0.4s
-
-#23 [backend stage-0 5/6] COPY . .
-#23 DONE 18.8s
-
-#26 [frontend] resolving provenance for metadata file
-#26 DONE 0.1s
-
-#27 [backend stage-0 6/6] RUN mkdir -p /data /app/uploads
-#27 DONE 7.6s
-
-#28 [backend] exporting to image
-#28 exporting layers
-#28 exporting layers 6.2s done
-#28 writing image sha256:601faa38b39ce78c772b5ad410a9cfd346877876112b2d8f79ded5af5feec988 done
-#28 naming to docker.io/library/stylesense-remediation-backend done
-#28 DONE 6.2s
-
-#29 [backend] resolving provenance for metadata file
-#29 DONE 0.0s
- stylesense-remediation-frontend  Built
- stylesense-remediation-backend  Built
+#13 resolving provenance for metadata file
+#13 DONE 0.0s
+ stylesense-accounts-backend  Built

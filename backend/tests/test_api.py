@@ -63,7 +63,7 @@ def test_06_recommendation_ranking(client):
     assert len(first["explanation"]) > 0
 
 def test_07_cold_start_recommendations(client):
-    res = client.get("/api/v1/recommendations/99999?limit=5")
+    res = client.get("/api/v1/recommendations/0?limit=5")
     assert res.status_code == 200
     data = res.json()
     assert data["strategy"] == "cold_start_popular"
@@ -289,6 +289,7 @@ def test_25_order_creation_success(client):
         "customer_id": 1,
         "session_id": "test_order_session",
         "idempotency_key": "legacy-success-order",
+        "address_id": 1,
         "items": [
             {"product_id": 102, "quantity": 2, "selected_size": "M"}
         ]
@@ -310,6 +311,7 @@ def test_26_stock_reduction_and_rollback_on_failure(client):
     fail_order = client.post("/api/v1/orders", json={
         "customer_id": 1,
         "idempotency_key": "legacy-failure-order",
+        "address_id": 1,
         "items": [
             {"product_id": 103, "quantity": 9999, "selected_size": "M"}
         ]

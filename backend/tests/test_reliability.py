@@ -10,7 +10,7 @@ from app.models.product import Product
 from app.models.order import Order, OrderItem
 from app.models.event import Event
 from app.models.inventory import InventoryMovement
-from app.models.wishlist import WishlistEntry
+from app.models.account import UserWishlistItem as WishlistEntry
 
 @pytest.fixture
 def commerce(db, empty_client):
@@ -19,10 +19,12 @@ def commerce(db, empty_client):
         db.add(Product(id=pid, sku=f'TEST-{pid}', name=f'Cotton Shirt {pid}', brand='Test', category='Shirts', colour='Blue',
             price=10.10, stock_quantity=5, sizes_available=['S','M'], active=True, rating=4, review_count=1))
     db.commit()
+    from conftest import authenticate_client
+    authenticate_client(db,empty_client,role="admin",customer_id=1)
     return empty_client
 
 def payload(qty=2, key=None, **item):
-    return {'customer_id':1,'session_id':'journey', 'idempotency_key':key or str(uuid4()),
+    return {'address_id':1,'customer_id':1,'session_id':'journey', 'idempotency_key':key or str(uuid4()),
             'items':[{'product_id':1,'quantity':qty,'selected_size':'M',**item}]}
 
 def unchanged(db):
@@ -66,7 +68,7 @@ def test_inactive_product(commerce,db):
 
 def test_invalid_customer(commerce,db):
     p=payload();p['customer_id']=999
-    assert commerce.post('/api/v1/orders',json=p).status_code==404
+    assert commerce.post('/api/v1/orders',json=p).status_code==403
     unchanged(db)
 
 @pytest.mark.parametrize('extra',[{'discount':-1},{'discount_percentage':101},{'total_amount':0}])
@@ -129,14 +131,14 @@ def test_wishlist_persistence_duplicates_and_unavailable(commerce,db):
     assert commerce.delete(url).status_code==200
     assert commerce.get('/api/v1/wishlist/1').json()==[]
     assert commerce.put('/api/v1/wishlist/1/999').status_code==404
-    assert commerce.get('/api/v1/wishlist/999').status_code==404
+    assert commerce.get('/api/v1/wishlist/999').status_code==403
 
 def test_event_deduplication_and_validation(commerce,db):
     p={'customer_id':1,'session_id':'s','event_type':'product_view','product_id':1,'event_key':'event-unique'}
     a=commerce.post('/api/v1/events',json=p);b=commerce.post('/api/v1/events',json=p)
     assert a.status_code==b.status_code==200 and a.json()['id']==b.json()['id']
     assert commerce.post('/api/v1/events',json={**p,'product_id':2}).status_code==409
-    assert commerce.post('/api/v1/events',json={**p,'event_key':'other','customer_id':999}).status_code==404
+    assert commerce.post('/api/v1/events',json={**p,'event_key':'other','customer_id':999}).status_code==403
 
 def test_test_database_isolation(db_engine):
     from app.db.session import engine

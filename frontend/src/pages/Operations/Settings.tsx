@@ -14,7 +14,7 @@ export const SettingsPage: React.FC = () => {
       const data = await fetchFeatureFlags()
       setFlags(data)
     } catch (err) {
-      console.error('Failed to load feature flags:', err)
+      console.error('Failed to load feature flags:')
     } finally {
       setLoading(false)
     }
@@ -31,7 +31,7 @@ export const SettingsPage: React.FC = () => {
       setTimeout(() => setSavedNotice(null), 2500)
       load()
     } catch (err) {
-      console.error('Failed to update flag:', err)
+      console.error('Failed to update flag:')
     }
   }
 
@@ -42,7 +42,7 @@ export const SettingsPage: React.FC = () => {
       setTimeout(() => setSavedNotice(null), 2500)
       load()
     } catch (err) {
-      console.error('Failed to update rollout percentage:', err)
+      console.error('Failed to update rollout percentage:')
     }
   }
 

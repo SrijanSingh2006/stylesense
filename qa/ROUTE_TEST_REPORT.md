@@ -1,3 +1,5 @@
+> **Historical reliability-release report.** Current account-upgrade results are in [FINAL_ACCEPTANCE_REPORT.md](FINAL_ACCEPTANCE_REPORT.md) and [END_TO_END_TEST_RESULTS.md](END_TO_END_TEST_RESULTS.md).
+
 # Browser route verification
 
 The final browser run used the production Vite build and a real FastAPI server backed by a fresh temporary database. Each route entry below was inspected at 1440x900, 1366x768, 768x1024, 390x844 and 360x800. Document overflow, page exceptions, unexpected API errors and broken images were checked. Remote photo/font requests were deliberately aborted to verify the local image fallback. An additional console-error sweep checked every route.

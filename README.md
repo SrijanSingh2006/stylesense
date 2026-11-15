@@ -6,7 +6,7 @@
 
 StyleSense is an independently branded fashion-commerce portfolio application connecting a customer storefront, product-intelligence dashboard, experimentation tools and business operations through a shared FastAPI backend and relational database.
 
-It demonstrates product discovery, explainable recommendations, sizing assistance, simulated checkout, behavioural analytics and commerce operations in one working codebase. Core features do not require a paid AI API.
+It combines verified customer accounts, role-controlled workspaces, product discovery, explainable recommendations, sizing assistance, simulated checkout, behavioural analytics and commerce operations in one working codebase. Core features do not require a paid AI API.
 
 > **Project status:** verified local portfolio prototype. All bundled customers, products, events and orders are synthetic. Checkout does not collect payments. Business uplift, reduced returns and realized GMV are not claimed as real customer outcomes. See [verification results](#verification-results) and [known limitations](#known-limitations).
 
@@ -17,6 +17,7 @@ It demonstrates product discovery, explainable recommendations, sizing assistanc
 - [Technology stack](#technology-stack)
 - [Architecture](#architecture)
 - [Quick start](#quick-start)
+- [Accounts, email and development users](#accounts-email-and-development-users)
 - [Configuration](#configuration)
 - [Database, migrations and demo data](#database-migrations-and-demo-data)
 - [Application routes](#application-routes)
@@ -55,7 +56,9 @@ The current code has been verified locally and in connected Docker services. A v
 - Complete-the-look suggestions across complementary categories.
 - Rule-based size and fit assistant with explanations and alternative sizes.
 - Database-backed customer wishlists with duplicate prevention, removal, counts and refresh persistence.
-- Browser-persisted shopping bag, quantity changes and simulated checkout.
+- Guest bag with replay-safe login merge; database-backed authenticated cart and saved-address → review → simulated-payment checkout.
+- Email verification, password recovery, profile/avatar editing, saved addresses/preferences, owned order history, notifications and active-session controls.
+- Seven-step optional-preference onboarding and customer/product-manager/operations/admin workspaces.
 - Positive-integer quantity validation, valid-size checks, backend-calculated totals, atomic stock updates and replay-safe orders.
 - Visible request errors and local product-image fallbacks when external photos fail.
 
@@ -88,12 +91,13 @@ The table lists technologies present in the repository, rather than packages req
 
 | Layer | Technologies | Purpose |
 |---|---|---|
-| Frontend | React 18, TypeScript 5, Vite 5 | Application UI, typed components and builds |
+| Frontend | React 18, TypeScript 5, Vite 8 | Application UI, typed components and builds |
 | Styling and icons | Tailwind CSS 3, PostCSS, Lucide React, clsx, tailwind-merge | Shared visual system and responsive layouts |
-| Routing | React Router 6 | Storefront, dashboard and operations navigation |
-| Data and client state | Axios, TanStack Query 5, Zustand | API requests, server-state queries and persisted cart/persona state |
+| Routing | React Router 7 | Storefront, dashboard and operations navigation |
+| Data and client state | Axios, TanStack Query 5, Zustand | API requests, isolated server-state queries, memory-only authentication and guest-only cart persistence |
 | Charts | Recharts 2 | Funnel and management visualizations |
 | Backend | Python, FastAPI, Uvicorn | Versioned REST API and ASGI serving |
+| Authentication | Argon2id (`argon2-cffi`), PyJWT, email-validator | Password hashes, short-lived access JWTs, hash-only rotating database sessions |
 | Validation | Pydantic 2 | Request/response schemas and input validation |
 | Database | SQLAlchemy, SQLite, Alembic | Relational persistence and schema migrations |
 | PostgreSQL support | psycopg 3 / SQLAlchemy PostgreSQL dialect | Optional deployment database; runtime parity is not yet verified |
@@ -102,7 +106,7 @@ The table lists technologies present in the repository, rather than packages req
 | Image processing | Pillow, python-multipart | Image validation, uploads and colour extraction |
 | Monetary arithmetic | Python Decimal; SQL Numeric for orders/items | Two-decimal checkout calculations and historical order prices |
 | Backend tests | Pytest, pytest-xdist, HTTPX / FastAPI TestClient | Isolated API, transaction, concurrency, migration and metric checks |
-| Frontend tests | Vitest, React Testing Library, jsdom | Actual component, state and API-boundary behaviour |
+| Frontend tests | Vitest 5, React Testing Library, jsdom | Actual component, state and API-boundary behaviour |
 | Browser tests | Playwright and Chromium | Production-build journeys, route sweeps and screenshots |
 | Containers | Docker, Docker Compose, Nginx | Connected backend, production frontend, API proxy and persistent volumes |
 | Existing external hosting | Vercel | Historical frontend URLs; current deployment status is described above |
@@ -134,7 +138,7 @@ In Docker, Nginx serves the built frontend and forwards `/api/` and `/uploads/` 
 ### Prerequisites
 
 - Python **3.11+**; verified with Python **3.12** on Linux.
-- Node.js **22+** and npm.
+- Node.js **22.12+** and npm.
 - Git.
 - Optional Docker with Compose v2 for the container workflow.
 - Chromium or Playwright's downloaded Chromium for browser tests.
@@ -212,7 +216,59 @@ npm run dev -- --host 127.0.0.1
 | ReDoc | http://127.0.0.1:8000/redoc |
 | OpenAPI JSON | http://127.0.0.1:8000/openapi.json |
 
-Select a seeded customer persona to explore differing preferences. Purchases and stock changes are simulated but persist in the configured database.
+Create and verify a customer at `/register`, or explicitly seed development accounts using the instructions below. Staff workspaces require the appropriate backend role. Purchases and stock changes are simulated but persist in the configured database.
+
+## Accounts, email and development users
+
+Full instructions: [account management](docs/ACCOUNT_MANAGEMENT.md), [authentication architecture](docs/AUTHENTICATION_ARCHITECTURE.md), [role matrix](docs/ROLE_PERMISSION_MATRIX.md), [user journeys](docs/USER_JOURNEYS.md), [security design](docs/SECURITY_DESIGN.md).
+
+### Register and verify locally
+
+Run account CLI examples from `backend` with its virtual environment activated: `source .venv/bin/activate` on POSIX or `./.venv/Scripts/Activate.ps1` in PowerShell. You can also substitute the explicit virtual-environment Python path shown in Quick start.
+
+Use `127.0.0.1` consistently for both frontend and API. From the backend shell, export a stable secret before starting Uvicorn:
+
+```sh
+export AUTH_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
+export APP_PUBLIC_URL=http://127.0.0.1:5173
+export AUTH_EMAIL_MODE=outbox
+```
+
+At `/register`, provide a name/email, a matching 12–128-character password and accept the demonstration terms. The default policy requires three of uppercase, lowercase, numbers and symbols. The account stays pending until verification.
+
+**Local email is a private filesystem outbox, not real email.** Open the matching JSON file under `backend/.dev-mail`, copy the verification URL from `body` into the browser and click **Verify email**. Password resets and invitations use the same outbox. Never publish these files. Docker stores them at `/data/dev-mail` in the backend container; inspect through the operator's local filesystem/container access. There is no public outbox API.
+
+After verification, sign in and complete or skip the optional preference steps. You can later edit profile/avatar, addresses and preferences, manage wishlist/cart/orders, read notifications and revoke sessions in `/account`.
+
+### Explicit development accounts
+
+Normal catalogue seeding creates no login accounts. Export strong, distinct passwords and opt in from `backend`:
+
+```sh
+export SEED_DEMO_ACCOUNTS=true
+export DEMO_CUSTOMER_PASSWORD='YOUR_GENERATED_STRONG_CUSTOMER_PASSWORD'
+export DEMO_PRODUCT_MANAGER_PASSWORD='YOUR_GENERATED_STRONG_PM_PASSWORD'
+export DEMO_OPERATIONS_MANAGER_PASSWORD='YOUR_GENERATED_STRONG_OPS_PASSWORD'
+export DEMO_ADMIN_PASSWORD='YOUR_GENERATED_STRONG_ADMIN_PASSWORD'
+python -m app.seed_accounts
+```
+
+Replace the placeholders; there are no shipped passwords. In PowerShell use `$env:NAME = 'value'`. In Docker pass the same variables and execute `docker compose exec backend python -m app.seed_accounts`. Existing accounts are neither reset nor promoted by a repeat seed. Production forbids this seeder. Disable the flag after use.
+
+| Role | Default email | Workspace |
+|---|---|---|
+| Customer | `customer@stylesense.example.com` | `/onboarding`, then `/account` |
+| Product manager | `product_manager@stylesense.example.com` | Analytics, experiments, segments, flags, roadmap and feedback |
+| Operations manager | `operations_manager@stylesense.example.com` | Inventory, returns, catalogue, pricing and release edits |
+| Admin | `admin@stylesense.example.com` | `/admin`, user access, invitations, audit/settings and management tools |
+
+Each role's email can be overridden with `DEMO_<ROLE>_EMAIL`. Staff cannot self-register into privileged roles. To create the first administrator without demo accounts, export `ADMIN_EMAIL`, `ADMIN_PASSWORD` and optional `ADMIN_FULL_NAME`, then run `python -m app.bootstrap_admin`. This account also requires email verification. Later staff join through administrator-issued single-use seven-day invitations.
+
+### Session and ownership rules
+
+Access JWTs expire after five minutes by default and live only in memory. The HttpOnly refresh cookie rotates against hash-only database sessions. Cookie mutations require trusted Origin and synchronized CSRF; reset/password changes and role/status changes invalidate sessions. Permission checks use the current database role. Protected pages redirect anonymous users to sign-in; direct API access is also enforced.
+
+Addresses, wishlists, carts, preferences, notifications and orders are current-user scoped. Historical synthetic personas and orders remain unclaimed; registration never grants their history. Checkout revalidates the owned address, prices, sizes and stock and stores an address snapshot. Payment selection is simulated; no card data or funds are processed. Only eligible pending reserved orders can be cancelled; normal completed demonstration orders cannot.
 
 ## Configuration
 
@@ -220,6 +276,16 @@ The root [`.env.example`](.env.example) is a reference. **The Python backend doe
 
 | Variable | Component | Default / meaning |
 |---|---|---|
+| `ENVIRONMENT` | Backend | `development`; production activates strict secret/cookie/origin/mail/demo checks |
+| `AUTH_SECRET_KEY` | Backend | Stable random secret, at least 32 characters required in production; omitted development value is ephemeral and invalidates sessions on restart |
+| `AUTH_ACCESS_SECONDS` / `AUTH_REFRESH_DAYS` | Backend | `300` / `7`; access 60–900 seconds, refresh 1–30 days; ordinary non-remembered login uses one day |
+| `AUTH_COOKIE_SECURE` / `AUTH_COOKIE_SAMESITE` | Backend | `false` / `lax` locally; production requires Secure; `none` also requires Secure |
+| `APP_PUBLIC_URL` | Backend | `http://127.0.0.1:5173`; frontend URL used in verification/reset/invitation links |
+| `AUTH_EMAIL_MODE` / `AUTH_OUTBOX_DIR` | Backend | `outbox`, private `backend/.dev-mail`; `smtp` required in production |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_FROM`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Backend | Optional configured TLS provider; default port 587, SSL on 465 |
+| `AUTH_PASSWORD_COMPLEXITY` | Backend | `true`; mandatory length 12–128 remains enforced when disabled |
+| `AUTH_LOGIN_LIMIT` / `AUTH_RATE_WINDOW_SECONDS` | Backend | `5` failed email login attempts per 900 seconds; additional IP/endpoint limits apply |
+| `SEED_DEMO_ACCOUNTS` / `DEMO_<ROLE>_PASSWORD` | Seeder | Explicit opt-in, defaults false; all role passwords required; forbidden in production |
 | `DATABASE_URL` | Backend | `sqlite:///./stylesense.db`, relative to the backend process working directory |
 | `CORS_ORIGINS` | Backend | JSON array of permitted browser origins; local defaults include localhost and 127.0.0.1 on ports 5173 and 3000 |
 | `UPLOAD_DIR` | Backend | Repository `uploads/` directory unless explicitly set |
@@ -276,9 +342,9 @@ From `backend`, with dependencies installed:
 python ../scripts/migrate_legacy.py
 ```
 
-The script verifies the original table/column layout, creates a timestamped SQLite backup, adopts the frozen baseline and applies the reliability migration. It refuses an unknown schema. Invalid legacy stock, quantities or prices stop the repair migration rather than being silently deleted. Keep and verify the printed backup path.
+The script verifies the original table/column layout, creates a timestamped SQLite backup, adopts the frozen baseline and applies the reliability and account migrations. It refuses an unknown schema. Invalid legacy stock, quantities or prices stop the repair migration rather than being silently deleted. Keep and verify the printed backup path.
 
-Migrations add checkout replay protection, safe historical monetary columns, stock/item constraints, event keys and persistent wishlists. Destructive downgrades are intentionally disabled; restore a verified backup when a schema rollback is necessary.
+Migrations add checkout replay protection, safe historical monetary columns, stock/item constraints, event keys, accounts, private account resources, hash-only sessions/tokens and order ownership. Migration 0003 leaves existing orders with null ownership and never assigns historical records to new users. Destructive downgrades are intentionally disabled; restore a verified backup when a schema rollback is necessary.
 
 ### Optional PostgreSQL
 
@@ -296,7 +362,15 @@ For an **unversioned existing** PostgreSQL database, create and verify an extern
 | Customer | `/product/:id` | Product detail, size assistant and outfit suggestions |
 | Customer | `/wishlist` | Persisted customer wishlist |
 | Customer | `/cart` | Bag and simulated checkout |
-| Customer | `/account/demo` | Demo persona/preferences experience |
+| Authentication | `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password` | Verified customer access and recovery |
+| Onboarding | `/onboarding` | Seven-step optional preference setup |
+| Account | `/account`, `/account/profile`, `/account/orders`, `/account/orders/:id` | Private overview, profile/avatar and owned orders |
+| Account | `/account/addresses`, `/account/preferences`, `/account/wishlist` | Saved personal resources |
+| Security | `/account/security`, `/account/notifications` | Password/session controls and notifications |
+| Staff invitation | `/accept-invitation` | Set password using a valid staff invitation |
+| Administration | `/admin`, `/admin/users`, `/admin/users/:id` | Admin overview, search/filter and role/status changes |
+| Administration | `/admin/invitations`, `/admin/audit-logs`, `/admin/settings` | Staff invitation lifecycle, audit and system settings |
+| Legacy link | `/account/demo` | Redirects to authenticated `/account` |
 | Intelligence | `/dashboard` | Overview, North Star and product performance |
 | Intelligence | `/dashboard/analytics` | Ordered funnel and retention cohorts |
 | Intelligence | `/dashboard/experiments` | Experiments, exposure recording and results |
@@ -322,7 +396,12 @@ Base prefix: **`/api/v1`**. The running backend's `/docs` and `/openapi.json` ar
 | Health/products | `GET /health`, `GET /products`, `GET /products/{product_id}` |
 | Discovery | `POST /search`, `POST /visual-search`, `GET /recommendations/{customer_id}`, `GET /recommendations/{customer_id}/complete-look` |
 | Fit/events | `POST /size-recommendation`, `POST /events`, `POST /cart/events` |
-| Checkout | `POST /orders` |
+| Authentication | `POST /auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/logout-all`; `GET /auth/me`, `/auth/csrf`, `/auth/policy` |
+| Recovery / sessions | `POST /auth/verify-email`, `/auth/resend-verification`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/change-password`, `/auth/accept-invitation`; `GET /auth/sessions`, `DELETE /auth/sessions/{id}` |
+| Account | `GET/PATCH /users/me`, `POST /users/me/avatar`; address CRUD, preferences GET/PATCH, notifications/activity |
+| Private commerce | `/users/me/wishlist`, `/users/me/cart`, `/users/me/cart/items`, `/users/me/cart/merge`, `/users/me/checkout`, `/users/me/orders` and owned order detail/cancellation |
+| Administration | `/admin/users`, `/admin/users/{id}/status`, `/admin/users/{id}/role`, `/admin/invitations`, `/admin/audit-logs`, `/admin/settings` |
+| Legacy checkout | `POST /orders` (authenticated owner + saved owned address required) |
 | Wishlist | `GET /wishlist/{customer_id}`, `PUT /wishlist/{customer_id}/{product_id}`, `DELETE /wishlist/{customer_id}/{product_id}` |
 | Analytics | `GET /analytics/overview`, `/analytics/funnel`, `/analytics/cohorts`, `/analytics/products`, `/analytics/north-star` |
 | Segments | `GET /segments`, `GET /segments/{segment_name}` |
@@ -337,16 +416,18 @@ Example search body:
 {"query":"black sneakers under 2500","page":1,"limit":20}
 ```
 
-Example simulated checkout body — choose a product/size from the live catalogue first:
+Example current-account simulated checkout — first save an owned address and populate `/users/me/cart/items`:
 
 ```json
 {
-  "customer_id": 1,
-  "session_id": "demo-session",
+  "address_id": 1,
+  "session_id": "your-shopping-session",
   "idempotency_key": "unique-checkout-request-001",
-  "items": [{"product_id":101,"quantity":1,"selected_size":"M"}]
+  "payment_method": "simulated_upi"
 }
 ```
+
+Send `Authorization: Bearer ACCESS_TOKEN` to private APIs. Login/register/refresh and token-consumption requests require a trusted `Origin`; refresh/logout additionally require the HttpOnly cookie and matching `X-CSRF-Token`. Product and search APIs remain public. Interactive Swagger supports bearer authentication. Do not paste actual session secrets into issues or screenshots.
 
 Each quantity is a required strict positive integer; products must exist, be active and have a valid selected size and enough stock. Reuse the same checkout key when retrying an uncertain response: the API returns the original order. Reusing the key with different contents returns **409**. Failed orders roll back order/items, stock movements and purchase events together. Client-submitted totals or discounts are not accepted; current simulated checkout offers free delivery and no coupons.
 
@@ -371,36 +452,37 @@ Read the detailed [KPI definitions](docs/KPI_DEFINITIONS.md) and [experimentatio
 
 ### Verification results
 
-Recorded local validation on **15 November 2026**:
+Recorded account-upgrade validation on **16 November 2026 (Asia/Calcutta)**:
 
 | Suite/check | Result |
 |---|---|
-| Backend Pytest, two parallel workers | **135 passed**, 0 failed, 0 skipped |
-| Frontend Vitest | **19 passed**, 0 failed, 0 skipped |
-| Production-build Playwright | **11 passed**, 0 failed, 0 skipped |
-| Final automated-case total | **165 passed** |
-| TypeScript and production frontend build | Passed |
-| Connected Docker/proxy smoke checks | **5 passed**; both services healthy |
+| Backend pytest | **234 passed**, 0 failed/skipped |
+| Frontend Vitest 5 | **53 passed**, 0 failed/skipped |
+| Production-build Playwright | **21 passed**, 0 failed/skipped/flaky |
+| **Automated-case total** | **308 passed** |
+| Additional connected Docker/proxy checks | **11 passed**; both services healthy |
+| TypeScript, production builds and migrations | Passed |
+| Frontend npm advisory audit | **0 known vulnerabilities** |
 
-Browser coverage includes **20 route entries × five viewport sizes = 100 route/viewport visits**, plus customer, failed-checkout, management, operations, console-error and 404/redirect checks. Viewports: 1440×900, 1366×768, 768×1024, 390×844 and 360×800. Photos/fonts are deliberately made unavailable in image-fallback checks.
+Current upgrade evidence is recorded in [final acceptance](qa/FINAL_ACCEPTANCE_REPORT.md), [authentication results](qa/AUTH_TEST_RESULTS.md), [RBAC results](qa/RBAC_TEST_RESULTS.md) and [browser results](qa/END_TO_END_TEST_RESULTS.md). Raw JUnit and Playwright output is under `qa/`. The previous reliability release's 165-case report is retained separately as historical evidence and is not added to current counts.
 
-These are recorded execution results, not a live CI badge or a claim that every future environment will pass. PostgreSQL and Windows execution remain unverified. See the [final acceptance report](qa/FINAL_ACCEPTANCE_REPORT.md), [test report](qa/TEST_RESULTS.md) and raw XML/JSON artifacts under `qa/`.
+Validation runs against isolated SQLite databases and a real FastAPI server/production-built frontend. PostgreSQL runtime, Windows PowerShell, actual SMTP inbox delivery, external deployment and independent penetration testing remain unverified. Passing development checks does not establish a commercial production security certification.
 
 ### Run backend tests
 
 From the repository root, after installing backend dependencies:
 
 ```sh
-backend/.venv/bin/python -m pytest -q -n 2 --disable-warnings --junitxml=qa/backend-tests.xml
+backend/.venv/bin/python -m pytest -q -n 2 --disable-warnings --junitxml=qa/backend-test-results.xml
 ```
 
 PowerShell equivalent:
 
 ```powershell
-./backend/.venv/Scripts/python.exe -m pytest -q -n 2 --disable-warnings --junitxml=qa/backend-tests.xml
+./backend/.venv/Scripts/python.exe -m pytest -q -n 2 --disable-warnings --junitxml=qa/backend-test-results.xml
 ```
 
-Tests use independent temporary SQLite databases and FastAPI dependency overrides. No test resets the normal development database. Coverage includes quantity and size errors, exact stock effects, concurrent buyers, idempotent replay, rollback, historical revenue, cohort arithmetic, experiment attribution, wishlist persistence and migrations.
+Tests use independent temporary SQLite databases and FastAPI dependency overrides. No test resets the normal development database. Coverage includes quantity and size errors, exact stock effects, concurrent buyers, idempotent replay, rollback, historical revenue, cohort arithmetic, experiment attribution, wishlist persistence, account isolation, session rotation/reuse/CSRF/rate limits, role restrictions, password lifecycle and migrations.
 
 ### Run frontend and browser checks
 
@@ -415,7 +497,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Browser tests launch their own backend with a temporary database and serve the production frontend build on port 5173. Stop development servers using ports 8000 or 5173 first. The runner discovers `backend/.venv`; otherwise set `STYLESENSE_PYTHON` to an absolute executable path. In PowerShell from `frontend`:
+Browser tests generate per-run passwords and a stable per-run auth secret, explicitly seed four role accounts, use a private test outbox, launch their own backend with a temporary database and serve the production frontend build on port 5173. Stop development servers using ports 8000 or 5173 first. The runner discovers `backend/.venv`; otherwise set `STYLESENSE_PYTHON` to an absolute executable path. In PowerShell from `frontend`:
 
 ```powershell
 $env:STYLESENSE_PYTHON = (Resolve-Path ../backend/.venv/Scripts/python.exe).Path
@@ -436,7 +518,7 @@ docker compose up --build
 - Frontend: http://localhost:5173, serving the production build through Nginx.
 - Backend/docs: http://localhost:8000/docs.
 - Nginx forwards `/api/` and `/uploads/` to the backend service.
-- Backend startup runs migrations and non-destructive demo seeding before Uvicorn.
+- Backend startup runs migrations; Compose opts into non-destructive synthetic catalogue seeding with `SEED_CATALOGUE_ON_START=true`. Login accounts require a separate explicit seed command. Production image startup does not seed a catalogue by default.
 - Named volumes `stylesense-data` and `stylesense-uploads` persist database/uploads.
 - Both services provide health checks; frontend startup waits for backend readiness.
 
@@ -456,7 +538,7 @@ docker compose down
 
 Use a Python/container-capable host for the existing FastAPI backend. Build context is `backend/`; its Dockerfile runs the application on port 8000. Configure `DATABASE_URL`, `CORS_ORIGINS` and persistent uploads as needed. SQLite requires a persistent writable volume; an ephemeral serverless filesystem is not a reliable database deployment.
 
-Run `alembic upgrade head` against the intended database. Seed only an intended synthetic demo database. Verify that `https://YOUR_API_HOST/api/v1/health` returns JSON, then check `/docs` and a real product request. Do not publicly expose the demo management endpoints as production-secured operations tooling; authentication/authorization is not implemented.
+Run `alembic upgrade head` against the intended database. Seed only an intended synthetic demo database. Verify that `https://YOUR_API_HOST/api/v1/health` returns JSON, then check `/docs` and a real product request. Configure `ENVIRONMENT=production`, a strong stable `AUTH_SECRET_KEY`, Secure cookies, explicit HTTPS frontend/CORS origins and TLS SMTP; keep demo-account seeding disabled. Bootstrap and verify the first admin, then invite staff. See [production requirements](docs/ACCOUNT_MANAGEMENT.md#production-configuration). Prefer same-origin hosting for cookie reliability. No independent security certification or production load guarantee is claimed.
 
 ### 2. Deploy the frontend, including Vercel
 
@@ -507,7 +589,8 @@ stylesense/
 │   │   ├── layouts/            # Customer and management layouts
 │   │   ├── pages/              # Storefront, analytics, experiments, operations
 │   │   ├── services/           # API client and error formatting
-│   │   ├── store/              # Persisted cart and demo persona state
+│   │   ├── auth/               # Memory-only session restoration and role guards
+│   │   ├── store/              # Server cart, guest-only persistence and display preferences
 │   │   ├── tests/              # Vitest / React Testing Library
 │   │   ├── types/
 │   │   └── utils/              # Shared, tested calculations
@@ -531,6 +614,11 @@ stylesense/
 |---|---|
 | [KPI definitions](docs/KPI_DEFINITIONS.md) | Revenue eligibility, cohorts, funnel, CTR, returns and RFM |
 | [Experimentation guide](docs/EXPERIMENTATION_GUIDE.md) | Exposure, attribution, statistics and supported decision scope |
+| [Account setup](docs/ACCOUNT_MANAGEMENT.md) | Verification/outbox, demo users, first admin and production configuration |
+| [Authentication](docs/AUTHENTICATION_ARCHITECTURE.md) | Sessions, rotation and account lifecycle |
+| [Roles](docs/ROLE_PERMISSION_MATRIX.md) | Backend permissions and resource ownership |
+| [User journeys](docs/USER_JOURNEYS.md) | Customer, staff and admin flows |
+| [Security](docs/SECURITY_DESIGN.md) | Implemented controls and practical boundaries |
 | [Known limitations](docs/KNOWN_LIMITATIONS.md) | Prototype, algorithm, access and platform constraints |
 | [PRD narrative](docs/01_PRD_STYLESENSE.md) | Historical product framing; illustrative figures are labelled |
 | [SQL analytics narrative](docs/02_SQL_PRODUCT_ANALYTICS.md) | Historical analytics examples; compare with current schema/methodology |
@@ -549,6 +637,7 @@ These screenshots come from the local production-build browser tests, not the hi
 | Storefront | Product intelligence |
 |---|---|
 | ![StyleSense storefront](qa/screenshots/1440-_.png) | ![StyleSense dashboard](qa/screenshots/1440-_dashboard.png) |
+| ![Account sign in](qa/screenshots/auth-1440-login.png) | ![User administration](qa/screenshots/1440-_admin_users.png) |
 
 [All screenshots](qa/screenshots/) include desktop, tablet and mobile routes and an order-confirmation example.
 
@@ -573,12 +662,12 @@ These screenshots come from the local production-build browser tests, not the hi
 
 ## Known limitations
 
-- Demo personas are not authentication. Production authorization, real payment collection, refunds and fulfilment integrations are not implemented.
+- Accounts and backend permissions are implemented; MFA/OAuth, self-service email change/deletion, independent penetration testing and production operations guarantees are not. Real payment collection, refunds and fulfilment integrations remain unimplemented.
 - Inventory is stored per product, not per product/size variant. Delivery is free in the simulated checkout; coupons are not supported.
 - Recommendations, visual discovery, sizing, return risk and pricing are bounded algorithms/heuristics, not guarantees or externally validated commercial predictions.
 - Purchase conversion is the supported experiment launch-decision metric. Other primary metrics need dedicated estimators, guardrails and an experiment plan.
 - The personalization flag changes actual ranking; other legacy flags remain configuration metadata and do not all gate features.
-- The cart and demo persona use browser storage; wishlists and the documented business records use the database. Persona preferences are not a production customer-account system.
+- Only the anonymous bag uses local browser storage. Authenticated account resources live in the database; access/CSRF values are memory-only and refresh uses an HttpOnly cookie. Interrupted refresh responses and cross-tab races may require a new login. Local outbox is not real email delivery.
 - Gross revenue does not imply a net refund ledger. Unobserved CTR and incomplete retention periods remain unavailable/Pending.
 - PostgreSQL and native Windows execution are unverified. Accessibility certification, load/capacity testing and production security audits are not claimed.
 - Vite reports a large-bundle warning; Python UTC-timestamp deprecation warnings remain. See the QA report for practical limits.

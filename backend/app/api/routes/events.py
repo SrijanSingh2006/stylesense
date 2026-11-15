@@ -1,3 +1,4 @@
+from app.services.security import optional_user, own_customer, has_permission
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -9,7 +10,11 @@ from sqlalchemy.exc import IntegrityError
 router = APIRouter()
 
 @router.post("/events", response_model=EventResponse, tags=["Events"])
-def post_event(req: EventCreate, db: Session = Depends(get_db)):
+def post_event(req: EventCreate, db: Session = Depends(get_db), user=Depends(optional_user)):
+    if req.customer_id is not None:
+        if not user: raise HTTPException(401, "Sign in required")
+        if not (req.experiment_id is not None and has_permission(user, "experiments.manage")):
+            own_customer(user, req.customer_id)
     from app.models.customer import Customer
     from app.models.product import Product
     from app.models.experiment import ExperimentAssignment, Experiment

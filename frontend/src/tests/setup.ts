@@ -12,7 +12,7 @@ const localStorageMock = {
   clear: () => {
     Object.keys(storage).forEach((k) => delete storage[k])
   },
-  length: 0,
+  get length() { return Object.keys(storage).length },
   key: (index: number) => Object.keys(storage)[index] || null,
 }
 

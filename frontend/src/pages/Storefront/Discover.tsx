@@ -42,7 +42,7 @@ export const DiscoverPage: React.FC = () => {
       setTotal(res.total)
       setPages(res.pages)
     } catch (err) {
-      console.error('Failed to load products:', err)
+      console.error('Failed to load products:')
     } finally {
       setLoading(false)
     }

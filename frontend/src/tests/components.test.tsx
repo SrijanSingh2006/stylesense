@@ -31,7 +31,8 @@ const mockProduct: Product = {
 
 describe('StyleSense Frontend Component Tests', () => {
   beforeEach(() => {
-    useCartStore.getState().clearCart()
+    useCartStore.getState().resetLocal()
+    useUserStore.getState().setCurrentUser({ id: 0, display_name: 'Guest', preferred_categories: [], preferred_colours: [], preferred_brands: [], budget_min: 0, budget_max: 1000 })
     api.defaults.adapter = async (config) => ({ data: [], status: 200, statusText: "OK", headers: {}, config })
   })
 
@@ -68,9 +69,9 @@ describe('StyleSense Frontend Component Tests', () => {
     expect(useCartStore.getState().items.length).toBe(0)
   })
 
-  it('verifies demo user store persona defaults and session switching', () => {
+  it('starts anonymous and updates only the display profile', () => {
     const userStore = useUserStore.getState()
-    expect(userStore.currentUser.display_name).toContain('Aarav Mehta')
+    expect(userStore.currentUser.display_name).toBe('Guest')
     expect(userStore.sessionId).toBeDefined()
 
     userStore.setCurrentUser({

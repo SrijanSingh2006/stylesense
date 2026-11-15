@@ -65,7 +65,7 @@ export const ProductDetailPage: React.FC = () => {
         if (lookRes) setCompleteLook(lookRes)
         if (recRes) setSimilarItems(recRes.items)
       } catch (err) {
-        console.error('Failed to load product details:', err)
+        console.error('Failed to load product details:')
       } finally {
         setLoading(false)
       }
@@ -88,8 +88,8 @@ export const ProductDetailPage: React.FC = () => {
     ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : 0
 
-  const handleAddToCart = () => {
-    addItem(product, selectedSize, 1)
+  const handleAddToCart = async () => {
+    if (!(await addItem(product, selectedSize, 1))) return
     setAddedToast(true)
     setTimeout(() => setAddedToast(false), 2500)
   }

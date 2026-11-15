@@ -54,3 +54,7 @@ frontend/test-results/
 frontend/playwright-report/
 qa/browser-artifacts/
 *.db.backup-*
+
+# Local-only development email and authentication artifacts
+.dev-mail/
+*.auth-secret

@@ -16,3 +16,5 @@ from app.models import (
     Release,
 )
 from app.models.wishlist import WishlistEntry
+from app.models.account import (User,UserSession,EmailVerificationToken,PasswordResetToken,UserAddress,UserPreference,
+    UserWishlist,UserWishlistItem,Cart,CartItem,CartMergeReceipt,Notification,AuditLog,StaffInvitation,RateLimitBucket,SystemSetting)

@@ -18,18 +18,21 @@ def money(value):
         result = Decimal(str(value))
     except Exception:
         raise HTTPException(400, "Invalid product price")
-    if not result.is_finite() or result < 0:
+    if not result.is_finite() or result < 0 or result > Decimal("999999999999.99"):
         raise HTTPException(400, "Invalid product price")
     return result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
-def place_order(db, req):
+def place_order(db, req, user=None, address_snapshot=None, payment_method="simulated", after_order=None):
     canonical = req.model_dump(exclude={"idempotency_key", "session_id"})
+    canonical["user_id"] = user.id if user else None
+    canonical["address"] = address_snapshot
+    canonical["payment_method"] = payment_method
     canonical["items"] = sorted(canonical["items"], key=lambda x: (x["product_id"], x["selected_size"], x["quantity"]))
     fingerprint = hashlib.sha256(json.dumps(canonical, sort_keys=True).encode()).hexdigest()
 
     def replay(order):
-        if order.request_fingerprint != fingerprint:
+        if (user and order.user_id != user.id) or order.request_fingerprint != fingerprint:
             raise HTTPException(409, "Idempotency key already used for a different checkout")
         return order
 
@@ -39,7 +42,7 @@ def place_order(db, req):
     try:
         if not db.get(Customer, req.customer_id):
             raise HTTPException(404, "Customer not found")
-        order = Order(customer_id=req.customer_id, session_id=req.session_id or req.idempotency_key,
+        order = Order(user_id=user.id if user else None, address_snapshot=address_snapshot, payment_method=payment_method, stock_reserved=True, customer_id=req.customer_id, session_id=req.session_id or req.idempotency_key,
                       total_amount=Decimal("0.00"), status="PENDING",
                       idempotency_key=req.idempotency_key, request_fingerprint=fingerprint)
         db.add(order)
@@ -63,7 +66,7 @@ def place_order(db, req):
             if changed.rowcount != 1:
                 raise HTTPException(400, "Insufficient stock")
             db.expire(product)
-            total += price * item.quantity
+            total = money(total + price * item.quantity)
             db.add(OrderItem(order_id=order.id, product_id=product.id, quantity=item.quantity,
                              unit_price=price, selected_size=item.selected_size))
             db.add(InventoryMovement(product_id=product.id, movement_type="PURCHASE",
@@ -74,6 +77,7 @@ def place_order(db, req):
         db.add(Event(customer_id=req.customer_id, session_id=order.session_id,
                      event_type="purchase", event_metadata={"order_id": order.id, "total_amount": float(total)},
                      occurred_at=datetime.utcnow()))
+        if after_order: after_order(order)
         db.commit()
         db.refresh(order)
         return order

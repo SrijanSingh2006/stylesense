@@ -13,6 +13,7 @@ import { ProductCard } from '../components/ui/ProductCard'
 import { errorMessage } from '../services/errors'
 import { useCartStore } from '../store/useCartStore'
 import { useUserStore } from '../store/useUserStore'
+import { useAuthStore, type AccountUser } from '../auth/state'
 import type { Product } from '../types'
 
 const product: Product = { id: 1, sku: 'TEST', name: 'Test Cotton Shirt', brand: 'Test', category: 'Shirts', colour: 'Blue', price: 100,
@@ -27,32 +28,41 @@ function mount(node: React.ReactNode, path = '/') {
   return render(<QueryClientProvider client={client}><MemoryRouter initialEntries={[path]}>{node}</MemoryRouter></QueryClientProvider>)
 }
 beforeEach(() => {
-  useCartStore.getState().clearCart(); sessionStorage.clear()
+  useAuthStore.getState().accept({ access_token: 'test-access', csrf_token: 'test-csrf', expires_in: 300, user: { id: 1, customer_id: 1, full_name: 'Test Customer', role: 'customer', permissions: ['cart.manage', 'wishlist.manage', 'addresses.manage'], onboarding_completed: true } as AccountUser })
+  useCartStore.getState().resetLocal(); useCartStore.setState({ ownerUserId: 1 }); sessionStorage.clear()
   useUserStore.getState().setCurrentUser({ id: 1, display_name: 'Aarav Mehta', preferred_categories: [], preferred_colours: [], preferred_brands: [], budget_min: 0, budget_max: 1000 })
 })
 afterEach(cleanup)
 
 describe('API error propagation and checkout integrity', () => {
   it.each([400,404,422,500,'network','timeout'])('preserves cart and input on checkout error %s', async (status) => {
-    useCartStore.getState().addItem(product, 'M')
+    useCartStore.setState({ items: [{ product, selected_size: 'M', quantity: 1, id: 1 }] })
     api.defaults.adapter = async (config) => {
-      if (config.url === '/orders') throw failure(config, status)
+      if (config.url === '/users/me/checkout') throw failure(config, status)
+      if (config.url === '/users/me/addresses') return response(config, [{ id: 1, full_name: 'Saved Recipient', address_line_1: 'Saved delivery address', city: 'Delhi', postal_code: '110001', is_default: true }])
+      if (config.url === '/users/me/cart') return response(config, { items: useCartStore.getState().items })
       return response(config, {})
     }
     mount(<CartPage />)
-    const address = screen.getByLabelText('Delivery Address') as HTMLTextAreaElement
-    fireEvent.change(address, { target: { value: 'Saved delivery address' } })
+    await screen.findByText('Saved Recipient')
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Continue to order review' }) as HTMLButtonElement).disabled).toBe(false))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue to order review' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Continue to payment method' }))
+    fireEvent.click(screen.getByLabelText('Cash on delivery demonstration'))
     fireEvent.click(screen.getByRole('button', { name: /Complete Order/ }))
     await waitFor(() => expect(screen.getByRole('button', { name: /Complete Order/ }).hasAttribute('disabled')).toBe(false))
     expect(screen.queryByText('Order Successfully Placed')).toBeNull()
     expect(useCartStore.getState().items).toHaveLength(1)
-    expect(address.value).toBe('Saved delivery address')
+    expect((screen.getByLabelText('Cash on delivery demonstration') as HTMLInputElement).checked).toBe(true)
     expect(screen.getByText(status === 'timeout' ? /timed out/ : status === 'network' ? /Cannot reach/ : status === 422 ? /Must be positive/ : /Unable to place order/)).toBeDefined()
   })
   it('clears cart only after a real successful order response', async () => {
-    useCartStore.getState().addItem(product, 'M')
-    api.defaults.adapter = async (config) => response(config, config.url === '/orders' ? { id: 42, customer_id: 1, total_amount: 100, status: 'COMPLETED' } : {})
+    useCartStore.setState({ items: [{ product, selected_size: 'M', quantity: 1, id: 1 }] })
+    api.defaults.adapter = async (config) => response(config, config.url === '/users/me/checkout' ? { id: 42, customer_id: 1, total_amount: 100, status: 'COMPLETED' } : config.url === '/users/me/addresses' ? [{ id: 1, full_name: 'Recipient', is_default: true }] : config.url === '/users/me/cart' ? { items: useCartStore.getState().items } : {})
     mount(<CartPage />)
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Continue to order review' }) as HTMLButtonElement).disabled).toBe(false))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue to order review' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Continue to payment method' }))
     fireEvent.click(screen.getByRole('button', { name: /Complete Order/ }))
     await screen.findByText('Order Successfully Placed')
     expect(useCartStore.getState().items).toHaveLength(0)
@@ -70,6 +80,7 @@ describe('Persistent wishlist at the network boundary', () => {
   it('adds, reloads, and removes a saved product through the API', async () => {
     let saved: Product[] = []
     api.defaults.adapter = async (config) => {
+      if (config.url === '/users/me/cart/items') return response(config, { items: [{ id: 1, product, selected_size: 'M', quantity: 1 }] })
       if (config.method === 'put') saved = [product]
       if (config.method === 'delete') saved = []
       return response(config, saved)
@@ -82,7 +93,7 @@ describe('Persistent wishlist at the network boundary', () => {
     mount(<WishlistPage />)
     await screen.findByText('Test Cotton Shirt')
     fireEvent.click(screen.getByRole('button', { name: 'Add to bag' }))
-    expect(useCartStore.getState().items).toHaveLength(1)
+    await waitFor(() => expect(useCartStore.getState().items).toHaveLength(1))
     fireEvent.click(screen.getByRole('button', { name: 'Remove from wishlist' }))
     await screen.findByText(/Your wishlist is empty/)
   })

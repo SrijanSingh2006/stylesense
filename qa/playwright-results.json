@@ -55,6 +55,8 @@
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
         "timeout": 45000,
         "use": {
+          "actionTimeout": 15000,
+          "navigationTimeout": 30000,
           "baseURL": "http://127.0.0.1:5173",
           "headless": true,
           "launchOptions": {
@@ -98,6 +100,354 @@
   },
   "suites": [
     {
+      "title": "accounts.spec.ts",
+      "file": "accounts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "register, verify through private outbox, onboard, persist account and checkout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10271,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:02.337Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-873b0a4dd3a94cad389e",
+          "file": "accounts.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "admin invites a staff member, accepts invitation and enforces their workspace",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3407,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:13.487Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-ef77d4eeb74b8af97863",
+          "file": "accounts.spec.ts",
+          "line": 106,
+          "column": 1
+        },
+        {
+          "title": "password reset invalidates sessions and the single-use link",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4516,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:16.928Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-6351c27fa0a37da7813b",
+          "file": "accounts.spec.ts",
+          "line": 137,
+          "column": 1
+        },
+        {
+          "title": "customer denied private management APIs and staff role escalations",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2368,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:21.471Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-e3cb8bd28cfdd3c702ab",
+          "file": "accounts.spec.ts",
+          "line": 188,
+          "column": 1
+        },
+        {
+          "title": "public auth forms fit viewport 1440",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2896,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:23.875Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-7bd230e2ebcb64c7e968",
+          "file": "accounts.spec.ts",
+          "line": 208,
+          "column": 3
+        },
+        {
+          "title": "public auth forms fit viewport 768",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2420,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:26.784Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-16fb588bbe3ee46c5529",
+          "file": "accounts.spec.ts",
+          "line": 208,
+          "column": 3
+        },
+        {
+          "title": "public auth forms fit viewport 390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2407,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:29.227Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-130812fe8b40fa9bf4c2",
+          "file": "accounts.spec.ts",
+          "line": 208,
+          "column": 3
+        },
+        {
+          "title": "public auth forms fit viewport 360",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2204,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:31.652Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-3c0a1743a4e708fe0b37",
+          "file": "accounts.spec.ts",
+          "line": 208,
+          "column": 3
+        },
+        {
+          "title": "admin searches users, changes status and inspects the audit trail",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:33.887Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-daa652c2079cfa321fbc",
+          "file": "accounts.spec.ts",
+          "line": 235,
+          "column": 1
+        },
+        {
+          "title": "anonymous visitors are redirected and direct private requests return no records",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1501,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T20:14:36.562Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "cbe1475516a9f5b841ab-28936f75f3cc9be28fde",
+          "file": "accounts.spec.ts",
+          "line": 269,
+          "column": 1
+        }
+      ]
+    },
+    {
       "title": "application.spec.ts",
       "file": "application.spec.ts",
       "column": 0,
@@ -119,12 +469,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 25331,
+                  "duration": 33354,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:45:34.540Z",
+                  "startTime": "2026-11-15T20:14:38.108Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -134,7 +484,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-a2828c3bc602a246405a",
           "file": "application.spec.ts",
-          "line": 19,
+          "line": 20,
           "column": 3
         },
         {
@@ -153,12 +503,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 22099,
+                  "duration": 30951,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:46:00.526Z",
+                  "startTime": "2026-11-15T20:15:11.481Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -168,7 +518,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-5431c7599cf680dc3864",
           "file": "application.spec.ts",
-          "line": 19,
+          "line": 20,
           "column": 3
         },
         {
@@ -187,12 +537,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 24963,
+                  "duration": 28568,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:46:22.653Z",
+                  "startTime": "2026-11-15T20:15:42.463Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -202,7 +552,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-366892cecd90ae2c2626",
           "file": "application.spec.ts",
-          "line": 19,
+          "line": 20,
           "column": 3
         },
         {
@@ -221,12 +571,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 18099,
+                  "duration": 27660,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:46:47.650Z",
+                  "startTime": "2026-11-15T20:16:11.055Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -236,7 +586,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-436a73d1278e009225ce",
           "file": "application.spec.ts",
-          "line": 19,
+          "line": 20,
           "column": 3
         },
         {
@@ -255,12 +605,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 16916,
+                  "duration": 26249,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:05.773Z",
+                  "startTime": "2026-11-15T20:16:38.743Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -270,7 +620,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-35bfecf0ddc4e4104a4a",
           "file": "application.spec.ts",
-          "line": 19,
+          "line": 20,
           "column": 3
         },
         {
@@ -289,12 +639,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 8220,
+                  "duration": 7390,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:22.719Z",
+                  "startTime": "2026-11-15T20:17:05.018Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -304,7 +654,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-ffe1c4f491503054427f",
           "file": "application.spec.ts",
-          "line": 40,
+          "line": 42,
           "column": 1
         },
         {
@@ -323,12 +673,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3793,
+                  "duration": 4182,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:30.964Z",
+                  "startTime": "2026-11-15T20:17:12.429Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -338,7 +688,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-c59c207499775826c2e8",
           "file": "application.spec.ts",
-          "line": 69,
+          "line": 77,
           "column": 1
         },
         {
@@ -357,12 +707,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5969,
+                  "duration": 6426,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:34.787Z",
+                  "startTime": "2026-11-15T20:17:16.644Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -372,7 +722,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-da6c3c876cfced07924e",
           "file": "application.spec.ts",
-          "line": 82,
+          "line": 94,
           "column": 1
         },
         {
@@ -391,12 +741,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 5019,
+                  "duration": 6251,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:40.811Z",
+                  "startTime": "2026-11-15T20:17:23.108Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -406,7 +756,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-32b7a24028e5adb377c1",
           "file": "application.spec.ts",
-          "line": 109,
+          "line": 136,
           "column": 1
         },
         {
@@ -425,12 +775,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 14075,
+                  "duration": 19043,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:45.859Z",
+                  "startTime": "2026-11-15T20:17:29.403Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -440,7 +790,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-31f99adcb08147cb75de",
           "file": "application.spec.ts",
-          "line": 146,
+          "line": 177,
           "column": 1
         },
         {
@@ -459,12 +809,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1793,
+                  "duration": 2717,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-15T11:47:59.966Z",
+                  "startTime": "2026-11-15T20:17:48.473Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -474,7 +824,7 @@
           ],
           "id": "ac4d568caf1644a25ff7-249dfa0b75211d6219fc",
           "file": "application.spec.ts",
-          "line": 163,
+          "line": 195,
           "column": 1
         }
       ]
@@ -482,9 +832,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-15T11:45:15.055Z",
-    "duration": 167047.726,
-    "expected": 11,
+    "startTime": "2026-11-15T20:13:42.263Z",
+    "duration": 249540.734,
+    "expected": 21,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

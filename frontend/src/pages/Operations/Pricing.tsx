@@ -21,7 +21,7 @@ export const PricingPage: React.FC = () => {
           setSelectedProductId(res.items[0].id)
         }
       } catch (err) {
-        console.error('Failed to load products for simulator:', err)
+        console.error('Failed to load products for simulator:')
       }
     }
     loadProds()
@@ -38,7 +38,7 @@ export const PricingPage: React.FC = () => {
       })
       setSimulation(res)
     } catch (err) {
-      console.error('Promotion simulation failed:', err)
+      console.error('Promotion simulation failed:')
     } finally {
       setLoading(false)
     }

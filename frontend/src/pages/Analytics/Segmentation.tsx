@@ -17,7 +17,7 @@ export const SegmentationPage: React.FC = () => {
         const res = await fetchSegments()
         setData(res)
       } catch (err) {
-        console.error('Failed to load segments:', err)
+        console.error('Failed to load segments:')
       } finally {
         setLoading(false)
       }

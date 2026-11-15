@@ -130,8 +130,9 @@ def test_attribution_excludes_pre_exposure_and_outside_window(db):
     db.query(Event).filter(Event.customer_id==4).update({'variant':'control'});db.commit()
     assert calculate_experiment_results(db,1).treatment.exposed_users==1
 
-def test_recorded_events_validate_assignment(empty_client,db):
+def test_recorded_events_validate_assignment(empty_client,db,authenticate):
     now=experiment(db,1,1,0,0)
+    authenticate(role="admin",customer_id=1)
     data={'customer_id':1,'session_id':'real','event_type':'experiment_exposure','experiment_id':1,'variant':'treatment'}
     assert empty_client.post('/api/v1/events',json=data).status_code==409
     data['variant']='control'

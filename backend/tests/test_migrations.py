@@ -17,7 +17,7 @@ def test_fresh_upgrade_and_metadata_consistency(tmp_path):
     command.upgrade(c,'head');command.upgrade(c,'head')
     engine=create_engine(url)
     with engine.connect() as connection:
-        assert connection.execute(text('select version_num from alembic_version')).scalar()=='0002'
+        assert connection.execute(text('select version_num from alembic_version')).scalar()=='0003'
         assert compare_metadata(MigrationContext.configure(connection,opts={'compare_type':True}),Base.metadata)==[]
         assert connection.execute(text('PRAGMA foreign_key_check')).all()==[]
     engine.dispose()
@@ -34,6 +34,9 @@ def test_existing_records_preserved(tmp_path):
     with engine.connect() as connection:
         assert connection.execute(text('select quantity,unit_price from order_items')).one()==(2,12.25)
         assert connection.execute(text('select total_amount from orders')).scalar()==24.50
+        assert connection.execute(text('select user_id from orders')).scalar() is None
+        assert connection.execute(text('select count(*) from users')).scalar()==0
+        assert connection.execute(text('select count(*) from customers')).scalar()==1
         assert connection.execute(text('select stock_quantity from products')).scalar()==5
         assert connection.execute(text('PRAGMA foreign_key_check')).all()==[]
     engine.dispose()
@@ -57,5 +60,5 @@ def test_legacy_adoption_creates_backup(tmp_path):
     module.migrate(url)
     assert len(list(tmp_path.glob('adopt.db.backup-*')))==1
     engine=create_engine(url)
-    with engine.connect() as connection: assert connection.execute(text('select version_num from alembic_version')).scalar()=='0002'
+    with engine.connect() as connection: assert connection.execute(text('select version_num from alembic_version')).scalar()=='0003'
     engine.dispose()

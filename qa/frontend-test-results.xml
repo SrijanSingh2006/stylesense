@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="53" failures="0" errors="0" time="3.32448026">
+    <testsuite name="src/tests/account-ui.test.tsx" timestamp="2026-11-15T20:13:14.926Z" hostname="f403425050e1" tests="15" failures="0" errors="0" skipped="0" time="0.565664884">
+        <testcase classname="src/tests/account-ui.test.tsx" name="forgot password reports development delivery without enumerating users" time="0.200849194">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="forgot password reports actual server failure" time="0.041734633">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="reset requires a link and matching strong password" time="0.033099272">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="verification failure does not claim activation" time="0.029244087">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="guest-only routes redirect a manager to their workspace" time="0.009316342">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="unauthorized page links to the account" time="0.004082669">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="logout clears memory after server success" time="0.001169379">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="failed logout retains the session and surfaces failure" time="0.004098953">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="onboarding preserves choices across next, back and optional steps" time="0.065843693">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="profile persists the server result" time="0.018443038">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="address form submits validated owner-independent fields" time="0.058144576">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="order errors show retry without fabricated empty history" time="0.014267561">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="notifications mark the actual record read" time="0.017697122">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="admin search and filters send actual query parameters" time="0.025798701">
+        </testcase>
+        <testcase classname="src/tests/account-ui.test.tsx" name="recognizes a verification token added to the same page hash" time="0.030644419">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/tests/auth.test.tsx" timestamp="2026-11-15T20:13:14.930Z" hostname="f403425050e1" tests="19" failures="0" errors="0" skipped="0" time="1.00949374">
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; keeps auth material out of browser storage" time="0.005918129">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; requires actual permissions" time="0.001602329">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; rejects unsafe redirect https://evil.test" time="0.000860567">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; rejects unsafe redirect //evil.test" time="0.001262717">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; rejects unsafe redirect /\evil.test" time="0.001107262">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; preserves safe intended destinations and chooses role homes" time="0.001683378">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; redirects anonymous users from private routes" time="0.143465727">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; denies authenticated users without permission" time="0.020796337">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Account boundaries &gt; waits for restoration before rendering private content" time="0.124232183">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Token refresh and context isolation &gt; shares one refresh among simultaneous requests" time="0.007718357">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Token refresh and context isolation &gt; retries once and preserves authentication after a business error" time="0.032290906">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Token refresh and context isolation &gt; clears expired auth when refresh fails" time="0.007222916">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Token refresh and context isolation &gt; rejects a late private response after an account change" time="0.005498791">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Registration and login forms &gt; requires password quality, confirmation and terms" time="0.312057923">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Registration and login forms &gt; offers show/hide password without changing its value" time="0.107084069">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="Registration and login forms &gt; enforces configured password lengths and category count" time="0.000541608">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="does not replay a request under a different user after refresh" time="0.011443558">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="shows invalid-login feedback without authenticating" time="0.15741754">
+        </testcase>
+        <testcase classname="src/tests/auth.test.tsx" name="signs in through the API and redirects to the actual staff role" time="0.057528653">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/tests/components.test.tsx" timestamp="2026-11-15T20:13:14.933Z" hostname="f403425050e1" tests="5" failures="0" errors="0" skipped="0" time="0.098508877">
+        <testcase classname="src/tests/components.test.tsx" name="StyleSense Frontend Component Tests &gt; renders ProductCard with brand, name, rating, and calculated discount" time="0.087950307">
+        </testcase>
+        <testcase classname="src/tests/components.test.tsx" name="StyleSense Frontend Component Tests &gt; manages cart store addition, quantity updates, and total calculation" time="0.003395544">
+        </testcase>
+        <testcase classname="src/tests/components.test.tsx" name="StyleSense Frontend Component Tests &gt; starts anonymous and updates only the display profile" time="0.00066021">
+        </testcase>
+        <testcase classname="src/tests/components.test.tsx" name="StyleSense Frontend Component Tests &gt; uses the same RICE function as the roadmap and validates inputs" time="0.001923315">
+        </testcase>
+        <testcase classname="src/tests/components.test.tsx" name="StyleSense Frontend Component Tests &gt; uses the actual product discount calculation" time="0.00042935">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/tests/reliability.test.tsx" timestamp="2026-11-15T20:13:14.934Z" hostname="f403425050e1" tests="14" failures="0" errors="0" skipped="0" time="1.650812759">
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error 400" time="0.408347677">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error 404" time="0.179596754">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error 422" time="0.15197371">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error 500" time="0.146973154">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error network" time="0.124124024">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; preserves cart and input on checkout error timeout" time="0.114006719">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; clears cart only after a real successful order response" time="0.101598769">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; never substitutes product data when the network fails" time="0.009463346">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="API error propagation and checkout integrity &gt; formats validation errors without rendering objects" time="0.001224916">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="Persistent wishlist at the network boundary &gt; adds, reloads, and removes a saved product through the API" time="0.151026953">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="Persistent wishlist at the network boundary &gt; shows an actionable error instead of a fabricated empty wishlist" time="0.014680888">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="Discovery requests &gt; sends selected category and sort to the real API service" time="0.07604395">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="Discovery requests &gt; uses the URL query in the search API payload" time="0.0117959">
+        </testcase>
+        <testcase classname="src/tests/reliability.test.tsx" name="Dashboard data and filters &gt; renders actual API metrics and refetches when the date filter changes" time="0.148739677">
+        </testcase>
+    </testsuite>
+</testsuites>

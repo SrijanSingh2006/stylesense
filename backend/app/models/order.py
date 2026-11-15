@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, CheckConstraint
+from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, CheckConstraint, JSON, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.session import Base
@@ -8,6 +8,10 @@ class Order(Base):
     __table_args__ = (CheckConstraint("total_amount >= 0", name="ck_order_total_nonnegative"),)
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    address_snapshot = Column(JSON, nullable=True)
+    payment_method = Column(String(30), nullable=True)
+    stock_reserved = Column(Boolean, nullable=False, default=False, server_default="0")
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False, index=True)
     session_id = Column(String(100), nullable=True)
     total_amount = Column(Numeric(14, 2), nullable=False)

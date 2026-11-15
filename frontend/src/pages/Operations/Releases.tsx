@@ -1,3 +1,4 @@
+import { useAuthStore, can } from '../../auth/state'
 import { errorMessage } from '../../services/errors'
 import React, { useEffect, useState } from 'react'
 import { Rocket, CheckCircle2, AlertTriangle, ShieldCheck, Clock, Check } from 'lucide-react'
@@ -5,6 +6,7 @@ import { fetchReleases, updateRelease } from '../../services/api'
 import type { Release } from '../../types'
 
 export const ReleasesPage: React.FC = () => {
+  const editable = can(useAuthStore((s) => s.user), 'releases.manage')
   const [releases, setReleases] = useState<Release[]>([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -16,7 +18,7 @@ export const ReleasesPage: React.FC = () => {
       const data = await fetchReleases()
       setReleases(data)
     } catch (err) {
-      console.error('Failed to load releases:', err)
+      console.error('Failed to load releases:')
     } finally {
       setLoading(false)
     }
@@ -64,7 +66,7 @@ export const ReleasesPage: React.FC = () => {
   const CHECKLIST_LABELS: Record<string, string> = {
     engineering_completed: 'Engineering code complete & merged',
     design_approved: 'Design & UI/UX signoff',
-    qa_testing_passed: 'QA automated test suite passing (26/26 tests)',
+    qa_testing_passed: 'QA test evidence reviewed and approved',
     analytics_instrumented: 'Analytics event tracking & funnel verified',
     documentation_ready: 'PRD, SQL documentation & Runbook published',
     stakeholder_signoff: 'Commercial & merchandising leadership signoff',
@@ -152,6 +154,7 @@ export const ReleasesPage: React.FC = () => {
                 {Object.entries(rel.checklist || {}).map(([key, val]) => (
                   <button
                     key={key}
+                    disabled={!editable}
                     aria-label={`Checklist ${key}`}
                     aria-pressed={val}
                     type="button"
@@ -181,7 +184,7 @@ export const ReleasesPage: React.FC = () => {
                 Gate Rule: Engineering, QA, analytics, documentation and stakeholder sign-off are required.
               </span>
 
-              {rel.status !== 'READY_FOR_DEPLOY' && rel.status !== 'DEPLOYED' && (
+              {editable && rel.status !== 'READY_FOR_DEPLOY' && rel.status !== 'DEPLOYED' && (
                 <button
                   onClick={() => handleApproveDeploy(rel)}
                   className="px-5 py-2.5 bg-brand hover:bg-brand-dark text-white text-xs font-semibold rounded-xl shadow transition-colors"

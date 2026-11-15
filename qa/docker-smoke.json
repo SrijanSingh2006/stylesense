@@ -1,11 +1,52 @@
 {
+  "date": "2026-11-16 Asia/Calcutta",
   "checks": [
-    "Production SPA deep-link refresh: PASS",
-    "Nginx to backend proxy/health: PASS",
-    "Migrated and seeded catalogue: PASS",
-    "Checkout, stock integrity and replay through production proxy: PASS",
-    "Negative checkout rejected through proxy: PASS"
+    {
+      "check": "Nginx to migrated backend JSON health",
+      "result": "PASS"
+    },
+    {
+      "check": "Seeded catalogue through production proxy",
+      "result": "PASS"
+    },
+    {
+      "check": "Anonymous private order access denied",
+      "result": "PASS"
+    },
+    {
+      "check": "Customer sign-in with HttpOnly cookie",
+      "result": "PASS"
+    },
+    {
+      "check": "Customer administration access denied",
+      "result": "PASS"
+    },
+    {
+      "check": "Owned saved-address checkout, atomic stock, cleared bag and replay",
+      "result": "PASS"
+    },
+    {
+      "check": "Owned order persisted through production proxy",
+      "result": "PASS"
+    },
+    {
+      "check": "Cookie mutation rejects invalid CSRF",
+      "result": "PASS"
+    },
+    {
+      "check": "Refresh rotation through same-origin proxy",
+      "result": "PASS"
+    },
+    {
+      "check": "Logout revokes bearer session",
+      "result": "PASS"
+    },
+    {
+      "check": "Production SPA private deep-link fallback",
+      "result": "PASS"
+    }
   ],
-  "order_id": 151,
-  "product_id": 116
+  "count": 11,
+  "real_payments": false,
+  "smtp_delivery_tested": false
 }

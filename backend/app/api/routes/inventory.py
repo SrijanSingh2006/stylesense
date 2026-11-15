@@ -1,3 +1,4 @@
+from app.services.security import require
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -27,7 +28,7 @@ def get_forecast(product_id: int, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.post("/inventory/movements", tags=["Inventory"])
+@router.post("/inventory/movements", dependencies=[Depends(require("inventory.manage"))], tags=["Inventory"])
 def create_movement(data: InventoryMovementCreate, db: Session = Depends(get_db)):
     try:
         mov = record_inventory_movement(db, data)

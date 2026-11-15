@@ -21,7 +21,7 @@ export const FeedbackPage: React.FC = () => {
       const data = await fetchFeedback()
       setFeedbacks(data)
     } catch (err) {
-      console.error('Failed to load feedback:', err)
+      console.error('Failed to load feedback:')
     } finally {
       setLoading(false)
     }
@@ -45,7 +45,7 @@ export const FeedbackPage: React.FC = () => {
       setComment('')
       load()
     } catch (err) {
-      console.error('Failed to create feedback:', err)
+      console.error('Failed to create feedback:')
     }
   }
 
@@ -69,7 +69,7 @@ export const FeedbackPage: React.FC = () => {
       load()
       alert('Feedback converted into a RICE roadmap task!')
     } catch (err) {
-      console.error('Failed to convert feedback:', err)
+      console.error('Failed to convert feedback:')
     }
   }
 

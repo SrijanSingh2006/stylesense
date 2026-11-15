@@ -1,0 +1,49 @@
+# Current browser screenshot index
+
+31 major routes at five sizes, seven public-auth routes at four sizes, plus two journey captures: **185 current screenshots**. Five older `account_demo` persona captures remain historical and are excluded below.
+
+| Route | 1440 | 1366 | 768 | 390 | 360 |
+|---|---|---|---|---|---|
+| `/` | [View](screenshots/1440-_.png) | [View](screenshots/1366-_.png) | [View](screenshots/768-_.png) | [View](screenshots/390-_.png) | [View](screenshots/360-_.png) |
+| `/discover` | [View](screenshots/1440-_discover.png) | [View](screenshots/1366-_discover.png) | [View](screenshots/768-_discover.png) | [View](screenshots/390-_discover.png) | [View](screenshots/360-_discover.png) |
+| `/search?q=shirts` | [View](screenshots/1440-_search_q_shirts.png) | [View](screenshots/1366-_search_q_shirts.png) | [View](screenshots/768-_search_q_shirts.png) | [View](screenshots/390-_search_q_shirts.png) | [View](screenshots/360-_search_q_shirts.png) |
+| `/product/101` | [View](screenshots/1440-_product_101.png) | [View](screenshots/1366-_product_101.png) | [View](screenshots/768-_product_101.png) | [View](screenshots/390-_product_101.png) | [View](screenshots/360-_product_101.png) |
+| `/cart` | [View](screenshots/1440-_cart.png) | [View](screenshots/1366-_cart.png) | [View](screenshots/768-_cart.png) | [View](screenshots/390-_cart.png) | [View](screenshots/360-_cart.png) |
+| `/wishlist` | [View](screenshots/1440-_wishlist.png) | [View](screenshots/1366-_wishlist.png) | [View](screenshots/768-_wishlist.png) | [View](screenshots/390-_wishlist.png) | [View](screenshots/360-_wishlist.png) |
+| `/account` | [View](screenshots/1440-_account.png) | [View](screenshots/1366-_account.png) | [View](screenshots/768-_account.png) | [View](screenshots/390-_account.png) | [View](screenshots/360-_account.png) |
+| `/account/profile` | [View](screenshots/1440-_account_profile.png) | [View](screenshots/1366-_account_profile.png) | [View](screenshots/768-_account_profile.png) | [View](screenshots/390-_account_profile.png) | [View](screenshots/360-_account_profile.png) |
+| `/account/orders` | [View](screenshots/1440-_account_orders.png) | [View](screenshots/1366-_account_orders.png) | [View](screenshots/768-_account_orders.png) | [View](screenshots/390-_account_orders.png) | [View](screenshots/360-_account_orders.png) |
+| `/account/addresses` | [View](screenshots/1440-_account_addresses.png) | [View](screenshots/1366-_account_addresses.png) | [View](screenshots/768-_account_addresses.png) | [View](screenshots/390-_account_addresses.png) | [View](screenshots/360-_account_addresses.png) |
+| `/account/preferences` | [View](screenshots/1440-_account_preferences.png) | [View](screenshots/1366-_account_preferences.png) | [View](screenshots/768-_account_preferences.png) | [View](screenshots/390-_account_preferences.png) | [View](screenshots/360-_account_preferences.png) |
+| `/account/security` | [View](screenshots/1440-_account_security.png) | [View](screenshots/1366-_account_security.png) | [View](screenshots/768-_account_security.png) | [View](screenshots/390-_account_security.png) | [View](screenshots/360-_account_security.png) |
+| `/account/notifications` | [View](screenshots/1440-_account_notifications.png) | [View](screenshots/1366-_account_notifications.png) | [View](screenshots/768-_account_notifications.png) | [View](screenshots/390-_account_notifications.png) | [View](screenshots/360-_account_notifications.png) |
+| `/admin` | [View](screenshots/1440-_admin.png) | [View](screenshots/1366-_admin.png) | [View](screenshots/768-_admin.png) | [View](screenshots/390-_admin.png) | [View](screenshots/360-_admin.png) |
+| `/admin/users` | [View](screenshots/1440-_admin_users.png) | [View](screenshots/1366-_admin_users.png) | [View](screenshots/768-_admin_users.png) | [View](screenshots/390-_admin_users.png) | [View](screenshots/360-_admin_users.png) |
+| `/admin/invitations` | [View](screenshots/1440-_admin_invitations.png) | [View](screenshots/1366-_admin_invitations.png) | [View](screenshots/768-_admin_invitations.png) | [View](screenshots/390-_admin_invitations.png) | [View](screenshots/360-_admin_invitations.png) |
+| `/admin/audit-logs` | [View](screenshots/1440-_admin_audit_logs.png) | [View](screenshots/1366-_admin_audit_logs.png) | [View](screenshots/768-_admin_audit_logs.png) | [View](screenshots/390-_admin_audit_logs.png) | [View](screenshots/360-_admin_audit_logs.png) |
+| `/admin/settings` | [View](screenshots/1440-_admin_settings.png) | [View](screenshots/1366-_admin_settings.png) | [View](screenshots/768-_admin_settings.png) | [View](screenshots/390-_admin_settings.png) | [View](screenshots/360-_admin_settings.png) |
+| `/dashboard` | [View](screenshots/1440-_dashboard.png) | [View](screenshots/1366-_dashboard.png) | [View](screenshots/768-_dashboard.png) | [View](screenshots/390-_dashboard.png) | [View](screenshots/360-_dashboard.png) |
+| `/dashboard/analytics` | [View](screenshots/1440-_dashboard_analytics.png) | [View](screenshots/1366-_dashboard_analytics.png) | [View](screenshots/768-_dashboard_analytics.png) | [View](screenshots/390-_dashboard_analytics.png) | [View](screenshots/360-_dashboard_analytics.png) |
+| `/dashboard/experiments` | [View](screenshots/1440-_dashboard_experiments.png) | [View](screenshots/1366-_dashboard_experiments.png) | [View](screenshots/768-_dashboard_experiments.png) | [View](screenshots/390-_dashboard_experiments.png) | [View](screenshots/360-_dashboard_experiments.png) |
+| `/dashboard/segments` | [View](screenshots/1440-_dashboard_segments.png) | [View](screenshots/1366-_dashboard_segments.png) | [View](screenshots/768-_dashboard_segments.png) | [View](screenshots/390-_dashboard_segments.png) | [View](screenshots/360-_dashboard_segments.png) |
+| `/operations` | [View](screenshots/1440-_operations.png) | [View](screenshots/1366-_operations.png) | [View](screenshots/768-_operations.png) | [View](screenshots/390-_operations.png) | [View](screenshots/360-_operations.png) |
+| `/operations/inventory` | [View](screenshots/1440-_operations_inventory.png) | [View](screenshots/1366-_operations_inventory.png) | [View](screenshots/768-_operations_inventory.png) | [View](screenshots/390-_operations_inventory.png) | [View](screenshots/360-_operations_inventory.png) |
+| `/operations/returns` | [View](screenshots/1440-_operations_returns.png) | [View](screenshots/1366-_operations_returns.png) | [View](screenshots/768-_operations_returns.png) | [View](screenshots/390-_operations_returns.png) | [View](screenshots/360-_operations_returns.png) |
+| `/operations/catalogue` | [View](screenshots/1440-_operations_catalogue.png) | [View](screenshots/1366-_operations_catalogue.png) | [View](screenshots/768-_operations_catalogue.png) | [View](screenshots/390-_operations_catalogue.png) | [View](screenshots/360-_operations_catalogue.png) |
+| `/operations/pricing` | [View](screenshots/1440-_operations_pricing.png) | [View](screenshots/1366-_operations_pricing.png) | [View](screenshots/768-_operations_pricing.png) | [View](screenshots/390-_operations_pricing.png) | [View](screenshots/360-_operations_pricing.png) |
+| `/operations/roadmap` | [View](screenshots/1440-_operations_roadmap.png) | [View](screenshots/1366-_operations_roadmap.png) | [View](screenshots/768-_operations_roadmap.png) | [View](screenshots/390-_operations_roadmap.png) | [View](screenshots/360-_operations_roadmap.png) |
+| `/operations/releases` | [View](screenshots/1440-_operations_releases.png) | [View](screenshots/1366-_operations_releases.png) | [View](screenshots/768-_operations_releases.png) | [View](screenshots/390-_operations_releases.png) | [View](screenshots/360-_operations_releases.png) |
+| `/operations/feedback` | [View](screenshots/1440-_operations_feedback.png) | [View](screenshots/1366-_operations_feedback.png) | [View](screenshots/768-_operations_feedback.png) | [View](screenshots/390-_operations_feedback.png) | [View](screenshots/360-_operations_feedback.png) |
+| `/operations/settings` | [View](screenshots/1440-_operations_settings.png) | [View](screenshots/1366-_operations_settings.png) | [View](screenshots/768-_operations_settings.png) | [View](screenshots/390-_operations_settings.png) | [View](screenshots/360-_operations_settings.png) |
+
+| Public route | 1440 | 768 | 390 | 360 |
+|---|---|---|---|---|
+| `/login` | [View](screenshots/auth-1440-login.png) | [View](screenshots/auth-768-login.png) | [View](screenshots/auth-390-login.png) | [View](screenshots/auth-360-login.png) |
+| `/register` | [View](screenshots/auth-1440-register.png) | [View](screenshots/auth-768-register.png) | [View](screenshots/auth-390-register.png) | [View](screenshots/auth-360-register.png) |
+| `/forgot-password` | [View](screenshots/auth-1440-forgot-password.png) | [View](screenshots/auth-768-forgot-password.png) | [View](screenshots/auth-390-forgot-password.png) | [View](screenshots/auth-360-forgot-password.png) |
+| `/verify-email` | [View](screenshots/auth-1440-verify-email.png) | [View](screenshots/auth-768-verify-email.png) | [View](screenshots/auth-390-verify-email.png) | [View](screenshots/auth-360-verify-email.png) |
+| `/reset-password` | [View](screenshots/auth-1440-reset-password.png) | [View](screenshots/auth-768-reset-password.png) | [View](screenshots/auth-390-reset-password.png) | [View](screenshots/auth-360-reset-password.png) |
+| `/accept-invitation` | [View](screenshots/auth-1440-accept-invitation.png) | [View](screenshots/auth-768-accept-invitation.png) | [View](screenshots/auth-390-accept-invitation.png) | [View](screenshots/auth-360-accept-invitation.png) |
+| `/terms` | [View](screenshots/auth-1440-terms.png) | [View](screenshots/auth-768-terms.png) | [View](screenshots/auth-390-terms.png) | [View](screenshots/auth-360-terms.png) |
+
+Journey captures: [order confirmation](screenshots/customer-order-confirmation.png), [admin audit](screenshots/admin-audit-journey.png).

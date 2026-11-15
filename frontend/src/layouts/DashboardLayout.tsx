@@ -1,3 +1,4 @@
+import { useAuthStore, can } from '../auth/state'
 import React, { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import {
@@ -21,9 +22,11 @@ import {
 } from 'lucide-react'
 
 export const DashboardLayout: React.FC = () => {
+  const user = useAuthStore((s) => s.user)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const location = useLocation()
 
+  const permissionFor: Record<string, string> = { '/dashboard': 'analytics.read', '/dashboard/analytics': 'analytics.read', '/dashboard/experiments': 'experiments.manage', '/dashboard/segments': 'segments.read', '/operations/inventory': 'inventory.read', '/operations/returns': 'returns.read', '/operations/catalogue': 'catalogue.manage', '/operations/pricing': 'pricing.simulate', '/operations/roadmap': 'roadmap.manage', '/operations/releases': 'releases.read', '/operations/feedback': 'feedback.manage', '/operations/settings': 'feature_flags.manage' }
   const navGroups = [
     {
       title: 'Product Intelligence',
@@ -47,10 +50,11 @@ export const DashboardLayout: React.FC = () => {
         { label: 'Feature Flags & Config', path: '/operations/settings', icon: Settings },
       ],
     },
-  ]
+  ].map((group) => ({ ...group, links: group.links.filter((link) => can(user, permissionFor[link.path])) })).filter((group) => group.links.length)
 
   return (
     <div className="min-h-screen flex bg-cream-100 text-charcoal-900">
+      <Link to="/account/security" className="fixed bottom-3 right-3 z-30 bg-white border border-cream-300 px-3 py-2 rounded-xl text-xs text-brand">My account & security</Link>
       {/* Mobile Sidebar Backdrop */}
       {mobileSidebarOpen && (
         <div

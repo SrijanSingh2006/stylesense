@@ -15,7 +15,7 @@ export const ReturnsPage: React.FC = () => {
         const res = await fetchReturns()
         setData(res)
       } catch (err) {
-        console.error('Failed to load return intelligence:', err)
+        console.error('Failed to load return intelligence:')
       } finally {
         setLoading(false)
       }

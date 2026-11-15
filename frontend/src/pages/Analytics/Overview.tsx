@@ -35,7 +35,7 @@ export const OverviewPage: React.FC = () => {
         setNorthStar(ns)
         setProducts(p)
       } catch (err) {
-        console.error('Failed to load overview data:', err)
+        console.error('Failed to load overview data:')
       } finally {
         setLoading(false)
       }
